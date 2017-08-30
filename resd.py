@@ -283,8 +283,7 @@ class ResData(object):
             
             i_str = str(i).zfill(2)
             
-            file_name = os.path.join(os.getcwd(),
-                                     file_dir,
+            file_name = os.path.join(os.getcwd(), DATA_PATH, file_dir,
                                      RES_FILE_PREFIX + i_str + INPUT_FILE_NAME_EXT)
             
             if not os.path.exists(file_name):   
@@ -336,6 +335,47 @@ class ResData(object):
         return res_list
     
     @staticmethod
+    def _load_lines(lines, file_type, j):
+        
+        status = LO_RES
+        
+        res_list = []
+        names_list = []
+        sco = []
+        sco_list = []
+        min_list = []
+        current_res = Res(file_type, j)
+        
+        for lin in lines:
+            
+            if status == LO_RES:
+                names_list = [lin]
+                status = VI_RES
+                
+            elif status == VI_RES:
+                names_list.append(lin)
+                status = RES_RES
+                
+            elif status == RES_RES:
+                pos = lin.find(SCO_DELIM)
+                sco = [ int(lin[:pos]), int(lin[pos+1:]) ]
+                status = CHG_RES
+            else:
+                pos = lin.find(SCO_DELIM)
+                if  pos > 0:
+                    sco_list.append([int(lin[:pos]), int(lin[pos+1:])])
+                elif lin.isdigit():
+                    min_list.append(lin)
+                else:
+                    res_list.append([names_list, sco, sco_list, min_list])
+                    names_list = [lin]
+                    sco_list = []
+                    min_list = []
+                    status = VI_RES
+            
+        return res_list
+    
+    @staticmethod
     def _extract_j(file_name):
         
         pos_start = file_name.find(RES_FILE_PREFIX) + len(RES_FILE_PREFIX)
@@ -344,11 +384,34 @@ class ResData(object):
         return int(file_name[pos_start:pos_end])
             
     @staticmethod
-    def _process_file(file_name, file_type):
+    def _process_file(full_path_name, file_type):
         
         lines_pro = []
         
-        full_path_name = os.path.join(DATA_PATH, file_name)
+        j = ResData._extract_j(full_path_name)
+        
+        print "Processing res in: %s" % full_path_name
+        
+        with open(full_path_name, 'r') as f:
+            for line in f:
+                
+                # Remove new lines.
+                line_wo_nl = line[:-1]
+                
+                try:
+                    # Try to convert the line read.
+                    lines_pro.append(SCO_STR_CONVERT[line_wo_nl])
+                except KeyError:
+                    # If exception, no conversion is needed, just add the line.
+                    lines_pro.append(line_wo_nl)  
+                    
+        # With all the lines read, process them.
+        return ResData._process_lines(lines_pro, file_type, j)   
+    
+    @staticmethod
+    def _load_file(full_path_name, file_type):
+        
+        lines_pro = []
         
         j = ResData._extract_j(full_path_name)
         
@@ -366,7 +429,7 @@ class ResData(object):
                     lines_pro.append(line_wo_nl)  
                     
         # With all the lines read, process them.
-        return ResData._process_lines(lines_pro, file_type, j)   
+        return ResData._load_lines(lines_pro, file_type, j)   
     
     def get_names(self):
         
@@ -395,13 +458,30 @@ class ResData(object):
         
         for d, t in zip(RES_DIRS, RES_TYPES):
         
-            res_files = glob.glob(os.path.join(d, "%s*" % RES_FILE_PREFIX))
+            res_files = glob.glob(os.path.join(DATA_PATH, d,
+                                               "%s*" % RES_FILE_PREFIX))
             
             for res in res_files:
                 
                 res_list = ResData._process_file(res, t)
                 
                 self._all_res.extend(res_list)
+                
+    def load_res(self, path = DATA_PATH):
+        
+        for d, t in zip(RES_DIRS, RES_TYPES):
+        
+            res_files = glob.glob(os.path.join(path, d, "%s*" % RES_FILE_PREFIX))
+            
+            res = []
+            
+            for r in res_files:
+                
+                res_list = ResData._load_file(r, t)
+                
+                res.append(res_list)
+                
+            self._all_res.append(res)
                 
 def save_file(file_name, data):
     
@@ -452,46 +532,7 @@ def generate_res(res):
             a2_res.append(new_row)
             
     save_file(B1_RES_FILE, b1_res)
-    save_file(A2_RES_FILE, a2_res)
-
-def process_k_data(index, res):
-    
-    k_data = KDat(index) 
-    
-    for k in k_data.k:
-        lo_name = k[K_NAME_1_COL]
-        vi_name = k[K_NAME_2_COL]
-        
-        lo_res = res.get_res(lo_name, True)
-        lo_n_for = len([r for r in lo_res if r.lo_is_forward()]) * 1.0
-        lo_n_for_and_w = len([r for r in lo_res if r.lo_is_forward_and_w()])
-        lo_n_for_and_t = len([r for r in lo_res if r.lo_is_forward_and_t()])
-        lo_n_for_and_l = len([r for r in lo_res if r.lo_is_forward_and_l()])                        
-        lo_n_rec = len([r for r in lo_res if r.lo_recover()])            
-                
-        vi_res = res.get_res(vi_name, False)
-        vi_n_for = len([r for r in vi_res if r.vi_is_forward()]) * 1.0
-        vi_n_for_and_w = len([r for r in vi_res if r.vi_is_forward_and_w()])
-        vi_n_for_and_t = len([r for r in vi_res if r.vi_is_forward_and_t()])
-        vi_n_for_and_l = len([r for r in vi_res if r.vi_is_forward_and_l()])                        
-        vi_n_rec = len([r for r in vi_res if r.vi_recover()])  
-        
-        len_lo_res = len(lo_res) * 1.0
-        len_vi_res = len(vi_res) * 1.0
-        
-        print "- %s - %s" % (lo_name, vi_name)
-        print " lo %d%% (%d%% %d%% %d%% - %d%%)" % \
-            (int(100.0 * lo_n_for / len_lo_res),
-             int(100.0 * lo_n_for_and_w / lo_n_for),
-             int(100.0 * lo_n_for_and_t / lo_n_for),
-             int(100.0 * lo_n_for_and_l / lo_n_for),
-             int(100.0 * lo_n_rec / len_lo_res))
-        print " vi %d%% (%d%% %d%% %d%% - %d%%)" % \
-            (int(100.0 * vi_n_for / len_vi_res),
-             int(100.0 * vi_n_for_and_w / vi_n_for),
-             int(100.0 * vi_n_for_and_t / vi_n_for),
-             int(100.0 * vi_n_for_and_l / vi_n_for),
-             int(100.0 * vi_n_rec / len_vi_res))                
+    save_file(A2_RES_FILE, a2_res)           
         
 def retrieve_res():   
     
@@ -505,15 +546,29 @@ def retrieve_res():
     
     generate_res(res.all_res)  
 
-def analyze_res(index):
+def load_res():
+    
+    print "Loading res ..."
     
     res = ResData() 
     
-    res.process_res()
+    res.load_res(SIMUL_DATA_PATH)
     
-    process_k_data(index, res)
+    return res
+
+def stats_detail(r_group):
     
-    return 0
+    for r in r_group:
+        None
+
+def stats_res(res):
+    
+    print "Number of groups: %d" % len(res.all_res)
+    
+    for r in res.all_res:
+        print "Group of %d elements." % len(r)
+        
+        r_stats = stats_detail(r)
 
 if __name__ == "__main__":  
     
