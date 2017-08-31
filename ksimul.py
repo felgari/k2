@@ -21,7 +21,7 @@
 
 import sys
 
-from resd import load_res, stats_res
+from resd import load_res, compile_pred_data
 
 def main():
     """Main function.
@@ -31,7 +31,7 @@ def main():
     
     res = load_res()
     
-    stats_res(res)
+    lo_data, vi_data, data_num = compile_pred_data(res)
 
 # Where all begins ...
 if __name__ == "__main__":

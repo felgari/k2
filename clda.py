@@ -27,11 +27,12 @@ from kfiles import extract_list_text
 
 class ClDat(object):
     
-    def __init__(self, index = DEFAULT_INDEX):
+    def __init__(self, index = DEFAULT_INDEX, path = DATA_PATH):
         
         self._index = index
         self._b1 = []
         self._a2 = []
+        self._path = path
                 
     def load(self):
         
@@ -79,7 +80,7 @@ class ClDat(object):
         
         lines = []   
         
-        full_path_name = os.path.join(DATA_PATH, file_name)
+        full_path_name = os.path.join(self._path, file_name)
         
         if len(full_path_name):
             if self._index != NO_READ_INDEX:
@@ -127,7 +128,7 @@ class ClDat(object):
         
         out_file_name = PREFIX_CL_FILE_NAME + self._index + SCRAPPED_DATA_FILE_EXT
         
-        full_path_name = os.path.join(DATA_PATH, out_file_name)
+        full_path_name = os.path.join(self._path, out_file_name)
         
         try:
             
