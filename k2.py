@@ -28,6 +28,7 @@ from kdat import KDat
 from clda import ClDat
 from resd import retrieve_res
 from extd import ExtD
+from ap import calc_ap_base
 from kfiles import save_all_data 
 
 def retrieve_data(index):
@@ -64,7 +65,10 @@ def main(progargs):
     success, k, cl, extd = retrieve_data(progargs.index)
     
     if success:
-        save_all_data(k, extd)
+        ap = calc_ap_base(extd.mean)
+        
+        print ap
+        save_all_data(k, extd, ap)
     else:
         print "Source data couldn't be loaded, no calculations were made."
         
