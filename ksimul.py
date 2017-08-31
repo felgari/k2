@@ -23,6 +23,13 @@ import sys
 
 from resd import load_res, compile_pred_data
 
+def simul(lo_data, vi_data, data_num):
+    
+    for dn, rd in zip(data_num, RES_DIRS):
+        
+        print "%d %s" % (dn, rd)
+        
+
 def main():
     """Main function.
     """    
@@ -32,6 +39,8 @@ def main():
     res = load_res()
     
     lo_data, vi_data, data_num = compile_pred_data(res)
+    
+    simul(lo_data, vi_data, data_num)
 
 # Where all begins ...
 if __name__ == "__main__":
