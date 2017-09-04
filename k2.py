@@ -34,6 +34,8 @@ from kfiles import save_all_data
 def retrieve_data(index):
     
     success = True
+    cl = None
+    extd = None
         
     k = KDat(index)
     
@@ -45,14 +47,17 @@ def retrieve_data(index):
         
         cl.load()
         
-    if progargs.retrieve_res:
-        retrieve_res()
-    else:
-        print "Retrieving of res not asked, using existing res ..."
+        if progargs.retrieve_res:
+            retrieve_res()
+        else:
+            print "Retrieving of res not asked, using existing res ..."
+            
+        extd = ExtD(k.index)
         
-    extd = ExtD(k.index)
-    
-    extd.load()
+        extd.load()
+    else:
+        print "Error loading k ..."
+        success = False
         
     return success, k, cl, extd
 

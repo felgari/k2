@@ -115,9 +115,9 @@ def extract_list_text(txt, num):
     
     return the_list   
 
-def save_data_to_csv(out_file_name, data):
+def save_data_to_csv(out_file_name, data, path = DATA_PATH):
     
-    full_path_name = os.path.join(DATA_PATH, out_file_name)
+    full_path_name = os.path.join(path, out_file_name)
     
     try:
 

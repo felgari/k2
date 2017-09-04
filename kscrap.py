@@ -112,6 +112,10 @@ class KScrap(object):
                 except KeyError:                
                     print "ERROR converting k name: %s" % first_it
                     success = False
+                    
+                if not success:
+                    k_data.append([str(i), type_el, K_UNKNOWN_NAME, K_UNKNOWN_NAME])
+                    success = True
         else:
             print "ERROR reading K, k_data not paired."       
             success = False 
