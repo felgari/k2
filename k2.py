@@ -30,6 +30,7 @@ from resd import retrieve_res
 from extd import ExtD
 from ap import calc_ap_base
 from kfiles import save_all_data 
+from report import do_report
 
 def retrieve_data(index):
     
@@ -71,9 +72,11 @@ def main(progargs):
     
     if success:
         ap = calc_ap_base(extd.mean)
+          
+        do_report(k.index, k.k, cl, None, None, extd.mean)
         
-        print ap
         save_all_data(k, extd, ap)
+        
     else:
         print "Source data couldn't be loaded, no calculations were made."
         
