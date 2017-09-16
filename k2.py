@@ -73,9 +73,9 @@ def main(progargs):
     if success:
         ap = calc_ap_base(extd.mean)
           
-        do_report(k.index, k.k, cl, None, None, extd.mean)
+        rep_ap = do_report(k.index, k.k, cl, None, None, extd.mean)
         
-        save_all_data(k, extd, ap)
+        save_all_data(k, extd, ap, rep_ap)
         
     else:
         print "Source data couldn't be loaded, no calculations were made."

@@ -20,6 +20,7 @@
 
 import requests
 import urllib2
+import httplib
 from bs4 import BeautifulSoup
 import unicodedata as un
 import json
@@ -228,9 +229,9 @@ class KScrap(object):
             print "Read: %dx%d" % (len(lm), len(lm[0]))
         except AttributeError as ae:
             print "ERROR retrieving lm: %s" % ae
-        except BadStatusLine as bsl:
+        except urllib2.BadStatusLine as bsl:
             print "ERROR BadStatusLine lm: %s" % bsl
-        except ConnectionError as ce:
+        except requests.ConnectionError as ce:
             print "ERROR ConnectionError lm: %s" % ce
         
     # ------------------------------------- VE scraping.  
@@ -259,9 +260,9 @@ class KScrap(object):
             print "Read: %dx%d" % (len(ve), len(ve[0]))
         except AttributeError as ae:
             print "ERROR retrieving ve: %s" % ae
-        except BadStatusLine as bsl:
+        except urllib2.BadStatusLine as bsl:
             print "ERROR BadStatusLine ve: %s" % bsl
-        except ConnectionError as ce:
+        except requests.ConnectionError as ce:
             print "ERROR ConnectionError ve: %s" % ce 
 
     # ------------------------------------- QU scraping.
@@ -300,16 +301,16 @@ class KScrap(object):
                 print "Read: %dx%d" % (len(qu), len(qu[0]))
             except AttributeError as ae:
                 print "ERROR retrieving qu: %s" % ae
-            except BadStatusLine as bsl:
+            except urllib2.BadStatusLine as bsl:
                 print "ERROR BadStatusLine qu: %s" % bsl
-            except ConnectionError as ce:
+            except requests.ConnectionError as ce:
                 print "ERROR ConnectionError qu: %s" % ce
             
     # ------------------------------------- Q1 scraping.
     @staticmethod
     def _process_q1_page(bsObj, q1):
         
-        try:
+        try:                       
             json_obj = bsObj.find(Q1_COBJ).get_text()
             
             json_data = json.loads(str(json_obj))
@@ -319,7 +320,7 @@ class KScrap(object):
                 
                 q1[i][0] = int(el[FIRST_FIELD])
                 q1[i][1] = int(el[SECOND_FIELD])
-                q1[i][2] = int(el[THIRD_FIELD])  
+                q1[i][2] = int(el[THIRD_FIELD])   
                 
         except UnicodeEncodeError as uee:
             print uee                   
@@ -336,12 +337,12 @@ class KScrap(object):
             
                 print "Read: %dx%d" % (len(q1), len(q1[0])) 
             except AttributeError as ae:
-                print "ERROR retrieving q1: %s" % ae   
-            except BadStatusLine as bsl:
-                print "ERROR BadStatusLine q1: %s" % bsl   
-            except ConnectionError as ce:
+                print "ERROR retrieving q1: %s" % ae     
+            except requests.ConnectionError as ce:
                 print "ERROR ConnectionError q1: %s" % ce    
-        
+            except Exception as e:
+                print "ERROR Exception q1: %s" % e 
+         
     # ------------------------------------- CQ scraping.
     @staticmethod
     def _process_cq_page(bsObj, cq, cqp):
@@ -386,9 +387,9 @@ class KScrap(object):
                 print "Read: %dx%d" % (len(cq), len(cqp))
             except AttributeError as ae:
                 print "ERROR retrieving cq: %s" % ae  
-            except BadStatusLine as bsl:
+            except urllib2.BadStatusLine as bsl:
                 print "ERROR BadStatusLine cq: %s" % bsl
-            except ConnectionError as ce:
+            except requests.ConnectionError as ce:
                 print "ERROR ConnectionError cq: %s" % ce
     
     # ------------------------------------- Cl scraping.

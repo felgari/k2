@@ -50,6 +50,8 @@ def report_file_name(index):
 
 def process_k(k_data, b1_res, a2_res, cl, index, pred_rf, pre, ex_mean):
     
+    rep_ap = []
+    
     out_file_name = os.path.join(DATA_PATH, report_file_name(index))
     
     avp = AvPos() 
@@ -113,11 +115,13 @@ def process_k(k_data, b1_res, a2_res, cl, index, pred_rf, pre, ex_mean):
                         (k_name_2, avp.avpos(k_name_2), name_2_trend))
                 
                 if len(trend) > 0:
-                    f.write("Ap trend: %s\n" % aptr.calculate_ap(trend, \
-                                                                 name_1_trend, \
-                                                                 name_2_trend, \
-                                                                 int(cl_1[CL_POS_COL]), \
-                                                                 int(cl_2[CL_POS_COL])))
+                    ap_t = aptr.calculate_ap(trend, name_1_trend, 
+                                             name_2_trend, int(cl_1[CL_POS_COL]), 
+                                             int(cl_2[CL_POS_COL]))
+                    
+                    rep_ap.append(ap_t)
+                    
+                    f.write("Ap trend: %s\n" % ap_t)
                 
                 f.write("%s\n" % FIRST_SEP)
                 
@@ -142,7 +146,9 @@ def process_k(k_data, b1_res, a2_res, cl, index, pred_rf, pre, ex_mean):
         aptr.write_data(index)
                     
     except IOError as ioe:
-         print "Error saving file: '%s'" % out_file_name               
+         print "Error saving file: '%s'" % out_file_name 
+         
+    return rep_ap              
 
 def do_report(index, k, cl, pred_rf, pre, ex_mean): 
     
@@ -152,7 +158,7 @@ def do_report(index, k, cl, pred_rf, pre, ex_mean):
     
     a2_res = read_res_file(A2_RES_FILE)
     
-    process_k(k, b1_res, a2_res, cl, index, pred_rf, pre, ex_mean)
+    return process_k(k, b1_res, a2_res, cl, index, pred_rf, pre, ex_mean)
     
 def report_generated(index):
     
