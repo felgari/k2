@@ -93,7 +93,7 @@ def process_k(k_data, b1_res, a2_res, cl, index, pred_rf, pre, ex_mean):
                 
                 f.write("-> %s (%s) - %s (%s)\n" % \
                         (k_name_1, cl_1[CL_POS_COL], k_name_2, cl_2[CL_POS_COL]))
-                
+                    
                 if pred_rf:
                     f.write("His %s\n" % pred_rf[idx])
                     
@@ -146,7 +146,11 @@ def process_k(k_data, b1_res, a2_res, cl, index, pred_rf, pre, ex_mean):
         aptr.write_data(index)
                     
     except IOError as ioe:
-         print "Error saving file: '%s'" % out_file_name 
+        print "IOError saving file: '%s'" % out_file_name 
+    except KeyError as ke:
+        print "KeyError saving file: '%s'" % out_file_name
+    except IndexError as ie:
+        print "IndexError saving file: '%s'" % out_file_name
          
     return rep_ap              
 
