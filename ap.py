@@ -63,8 +63,6 @@ def calc_ap_base(data):
                 else:
                     new_base += CURRENT_MAX[index_mid]
                     
-            print "%s -> %s" % (values, new_base)
-                    
             try:
                 base.append(AP_CONV[new_base])
             except KeyError:
