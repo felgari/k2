@@ -44,7 +44,7 @@ class AvPos(object):
         
         val = self._avpos[name]
         
-        val = val[:-AVP_LAST_POS]
+        val = val[min(0,AVP_LAST_POS):]
         
         if len(val) > 0:
             tr = sum(val) / float(len(val))
