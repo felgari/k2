@@ -32,6 +32,8 @@ from kfiles import read_input_file, read_res_file
 def get_matchings(name, data, is_first):
     
     mat = []
+    res = [0, 0, 0]
+    val_res = ""
     
     for d in data:
         if is_first:
@@ -40,9 +42,17 @@ def get_matchings(name, data, is_first):
             data_name = d[R_NAME_2_COL]
             
         if name == data_name:
-            mat.append(d[FIRST_R_COL:])
+            r = d[FIRST_R_COL:]
+            mat.append(r)
+            res = [x + y for x, y in zip(res, SUM_DIF_POS[r[R_NAME_2_COL]])]
             
-    return mat
+    mx = max(res)
+    
+    for i in range(len(NAMES_AP)):
+        if res[i] == mx:
+            val_res += NAMES_AP[i]
+            
+    return mat, val_res
 
 def report_file_name(index):    
     
@@ -51,6 +61,10 @@ def report_file_name(index):
 def process_k(k_data, b1_res, a2_res, cl, index, pred_rf, pre, ex_mean):
     
     rep_ap = []
+    
+    res_1 = []
+    
+    res_2 = []
     
     out_file_name = os.path.join(DATA_PATH, report_file_name(index))
     
@@ -86,8 +100,8 @@ def process_k(k_data, b1_res, a2_res, cl, index, pred_rf, pre, ex_mean):
                     cl_1 = cl.a2_data(k_name_1)
                     cl_2 = cl.a2_data(k_name_2)
                     
-                mat1 = get_matchings(k_name_1, data, True)
-                mat2 = get_matchings(k_name_2, data, False)
+                mat1, val_res1 = get_matchings(k_name_1, data, True)
+                mat2, val_res2 = get_matchings(k_name_2, data, False)
                 
                 f.write("%s\n" % GEN_SEP)
                 
@@ -121,7 +135,11 @@ def process_k(k_data, b1_res, a2_res, cl, index, pred_rf, pre, ex_mean):
                     
                     rep_ap.append(ap_t)
                     
-                    f.write("Ap trend: %s\n" % ap_t)
+                    res_1.append(val_res1)
+                    res_2.append(val_res2)
+                    
+                    f.write("Ap trend: %s -> %s %s\n" % \
+                            (ap_t, val_res1, val_res2))
                 
                 f.write("%s\n" % FIRST_SEP)
                 
@@ -152,7 +170,7 @@ def process_k(k_data, b1_res, a2_res, cl, index, pred_rf, pre, ex_mean):
     except IndexError as ie:
         print "IndexError saving file: '%s'" % out_file_name
          
-    return rep_ap              
+    return rep_ap, res_1, res_2              
 
 def do_report(index, k, cl, pred_rf, pre, ex_mean): 
     

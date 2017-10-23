@@ -154,7 +154,7 @@ def save_all(k, extm, p, p_rf, ap_rf, p_nn, ap_nn, index):
     except IOError as ioe:
          print "Error saving file: '%s'" % full_path_name
          
-def save_all_data(k, extd, ap, rep_ap):
+def save_all_data(k, extd, ap, rep_ap, res_1, res_2, q):
 
     out_file_name = OUTPUT_FILE_PREFIX + k.index + OUTPUT_FILE_NAME_EXT
     
@@ -180,7 +180,7 @@ def save_all_data(k, extd, ap, rep_ap):
                         extd.cq[i][0], extd.cq[i][1], extd.cq[i][2], \
                         extd.cqp[i][0], extd.cqp[i][1], extd.cqp[i][2], \
                         extd.mean[i][0], extd.mean[i][1], extd.mean[i][2], \
-                        ap[i], rep_ap[i] ]
+                        ap[i], rep_ap[i], res_1[i], res_2[i], q[i] ]
                            
                     f.write("%s%s%s%s%s\n" % ( k.k[i][NAME_LO_COL], CSV_DELIMITER,
                                        k.k[i][NAME_VI_COL], CSV_DELIMITER,

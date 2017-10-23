@@ -72,3 +72,26 @@ def calc_ap_base(data):
             base.append(MAX_IS_SECOND)
             
     return base
+
+def calc_q(rep_ap, res_1, res_2):
+    
+    q = []
+    
+    for i in range(len(rep_ap)):
+        
+        if rep_ap[i] == TREND_3:
+            
+            a = ""
+            
+            for j in range(len(rep_ap[i])):
+                if ( rep_ap[i][j] in res_1[i] ) or ( rep_ap[i][j] in res_2[i] ):
+                    a += rep_ap[i][j]  
+                    
+            if a == AP_UNDEF_VAL or a == TREND_3:
+                a = TREND_2 
+            
+            q.append(a)
+        else:
+            q.append(rep_ap[i])
+    
+    return q
