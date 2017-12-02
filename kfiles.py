@@ -154,7 +154,7 @@ def save_all(k, extm, p, p_rf, ap_rf, p_nn, ap_nn, index):
     except IOError as ioe:
          print "Error saving file: '%s'" % full_path_name
          
-def save_all_data(k, extd, ap, rep_ap, res_1, res_2, q):
+def save_all_data(k, extd, ap, rep_ap, res_1, res_2, q, pre_1, pre_2):
 
     out_file_name = OUTPUT_FILE_PREFIX + k.index + OUTPUT_FILE_NAME_EXT
     
@@ -166,7 +166,7 @@ def save_all_data(k, extd, ap, rep_ap, res_1, res_2, q):
 
         with open(full_path_name, 'w') as f:  
             
-            f.write("%s\n" % CSV_DELIMITER.join(str(e) for e in OUT_COLS))
+            f.write("%s\n" % CSV_DELIMITER_TAB.join(str(e) for e in OUT_COLS))
             
             for i in range(len(k.k)):  
                 
@@ -180,13 +180,14 @@ def save_all_data(k, extd, ap, rep_ap, res_1, res_2, q):
                         extd.cq[i][0], extd.cq[i][1], extd.cq[i][2], \
                         extd.cqp[i][0], extd.cqp[i][1], extd.cqp[i][2], \
                         extd.mean[i][0], extd.mean[i][1], extd.mean[i][2], \
-                        ap[i], rep_ap[i], res_1[i], res_2[i], q[i] ]
+                        ap[i], rep_ap[i], res_1[i], res_2[i], \
+                        pre_1[i], pre_2[i], q[i] ]
                            
-                    f.write("%s%s%s%s%s\n" % ( k.k[i][NAME_LO_COL], CSV_DELIMITER,
-                                       k.k[i][NAME_VI_COL], CSV_DELIMITER,
-                                       CSV_DELIMITER.join(str(e) for e in row)))
+                    f.write("%s%s%s%s%s\n" % ( k.k[i][NAME_LO_COL], CSV_DELIMITER_TAB,
+                                       k.k[i][NAME_VI_COL], CSV_DELIMITER_TAB,
+                                       CSV_DELIMITER_TAB.join(str(e) for e in row)))
                 else:
-                    f.write("%s %s %s\n" % (K_UNKNOWN_NAME, CSV_DELIMITER, 
+                    f.write("%s %s %s\n" % (K_UNKNOWN_NAME, CSV_DELIMITER_TAB, 
                                             K_UNKNOWN_NAME))
             
         print "File with all data saved in: %s" % full_path_name

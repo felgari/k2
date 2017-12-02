@@ -28,8 +28,9 @@ from kdat import KDat
 from clda import ClDat
 from resd import retrieve_res
 from extd import ExtD
+from pred import predict_k
 from ap import calc_ap_base, calc_q
-from kfiles import save_all_data 
+from kfiles import save_all_data, read_res_file
 from report import do_report
 
 def retrieve_data(index):
@@ -72,12 +73,20 @@ def main(progargs):
     
     if success:
         ap = calc_ap_base(extd.mean)
+        
+        b1_res = read_res_file(B1_RES_FILE)    
+    
+        a2_res = read_res_file(A2_RES_FILE)
+        
+        pre_1, pre_2 = predict_k(k.k, cl, b1_res, a2_res)
           
-        rep_ap, res_1, res_2 = do_report(k.index, k.k, cl, None, None, extd.mean)
+        rep_ap, res_1, res_2 = do_report(k.index, k.k, cl, 
+                                         b1_res, a2_res, extd.mean,
+                                         pre_1, pre_2)
         
         q = calc_q(rep_ap, res_1, res_2)
         
-        save_all_data(k, extd, ap, rep_ap, res_1, res_2, q)
+        save_all_data(k, extd, ap, rep_ap, res_1, res_2, q, pre_1, pre_2)
         
     else:
         print "Source data couldn't be loaded, no calculations were made."

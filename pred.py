@@ -26,6 +26,25 @@ import tensorflow as tf
 import tensorflow.contrib.learn as skflow
 
 from ctes import *
+from utils import get_matchings
+
+def _get_val_index(values, order, sort_values, name):
+    
+    try:
+        i = order.index(name)
+        sort_values.append(values[i])
+    except ValueError:
+        sort_values.append(0)
+
+def _sort_pre_values(values, order):
+    
+    sort_values = []
+    
+    _get_val_index(values, order, sort_values, FIRST_NAME)
+    _get_val_index(values, order, sort_values, SECOND_NAME)
+    _get_val_index(values, order, sort_values, THIRD_NAME)                
+                
+    return sort_values  
 
 def prepare_data_for_nn(hist_data, data_to_predict, cl_data):
     
@@ -116,10 +135,10 @@ def predict_rf(hist_data, cl_data, data_to_predict):
 
     return link_perc_to_cl(prd, np.ndarray.tolist(rf.classes_))
 
-def process_input_data(pred_data):
+def extract_pred_data(pred_data):
     
-    hist_data = [ e[RES_1ST_POS_FOR_PRED:] for e in pred_data]
-    cl_data = [ e[RES_PRED_SCO_POS] for e in pred_data]
+    hist_data = [ e[:-1] for e in pred_data]
+    cl_data = [ e[-1] for e in pred_data]
     
     return hist_data, cl_data
 
@@ -128,7 +147,7 @@ def predict(pred_data, data_to_predict):
     data_out_rf = []
     data_out_nn = []
         
-    hist_data, cl_data = process_input_data(pred_data)
+    hist_data, cl_data = extract_pred_data(pred_data)
     
     if len(hist_data) and len(data_to_predict):
         
@@ -142,10 +161,93 @@ def eval_predict(pred_data, eval_data):
     rf_score = 0.0
     nn_score = 0.0
         
-    prd_data, prd_cl_data = process_input_data(pred_data)
-    eval_data, eval_cl_data = process_input_data(eval_data)
+    prd_data, prd_cl_data = extract_pred_data(pred_data)
+    eval_data, eval_cl_data = extract_pred_data(eval_data)
         
     rf_score = eval_predict_rf(prd_data, prd_cl_data, eval_data, eval_cl_data)
     nn_score = eval_predict_nn(prd_data, prd_cl_data, eval_data, eval_cl_data)
         
     return rf_score, nn_score
+
+def gen_hist(k, cl, b1_res, a2_res):
+
+    data_for_predict = []
+    data_to_predict = []
+    
+    for k_elt in k:
+        hist_data = []
+        to_pred_data = []
+        
+        k_name_1 = k_elt[K_NAME_1_COL]
+        k_name_2 = k_elt[K_NAME_2_COL]
+        data = b1_res
+        elt_type = TYPE_1_COL
+        cl_1 = cl.b1_data(k_name_1)
+        cl_2 = cl.b1_data(k_name_2)
+        
+        if len(cl_1) == 0:
+            data = a2_res
+            elt_type = TYPE_2_COL
+            cl_1 = cl.a2_data(k_name_1)
+            cl_2 = cl.a2_data(k_name_2)
+            
+        cl_lo = [cl_1[i] for i in LO_D_RANGE]
+        cl_vi = [cl_2[i] for i in VI_D_RANGE]
+        
+        to_pred_data.extend(cl_lo)
+        to_pred_data.extend(cl_vi)
+        
+        mat1, val_res1 = get_matchings(k_name_1, data, True)
+        mat2, val_res2 = get_matchings(k_name_2, data, False)
+        
+        for m in mat1:
+            name = m[MAT_NAME_2_COL]
+            if elt_type == TYPE_1_COL:
+                cl_data = cl.b1_data(name)
+            else:
+                cl_data = cl.a2_data(name)
+            h = []
+            h.extend(cl_lo)
+            h.extend([cl_data[i] for i in VI_D_RANGE])
+            h.extend(m[MAT_RES_COL])
+            hist_data.append(h)
+        
+        for m in mat2:
+            name = m[MAT_NAME_1_COL]
+            if elt_type == TYPE_1_COL:
+                cl_data = cl.b1_data(name)
+            else:
+                cl_data = cl.a2_data(name)
+            h = []
+            h.extend([cl_data[i] for i in LO_D_RANGE])
+            h.extend(cl_vi)
+            h.extend(m[MAT_RES_COL])
+            hist_data.append(h)
+            
+        data_for_predict.append(hist_data)
+        data_to_predict.append(to_pred_data)
+    
+    return data_for_predict, data_to_predict
+
+def predict_k(k, cl, b1_res, a2_res):
+    
+    pre_rf = []
+    pre_df = []
+    
+    data_for_predict, data_to_predict = gen_hist(k, cl, b1_res, a2_res)
+            
+    if len(data_for_predict) == len(data_to_predict):
+        
+        for i in range(len(data_for_predict)):
+            
+            p1, p2 = predict(data_for_predict[i], data_to_predict[i])
+            
+            pre_rf.extend(p1)
+            pre_df.extend(p2)
+    else:
+        print "ERROR: Length of data for prediction don't match: %d %d" % \
+            (len(data_for_predict), len(data_to_predict))
+            
+    return pre_rf, pre_df
+            
+            

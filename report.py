@@ -28,37 +28,15 @@ from avpos import AvPos
 from resdifpos import ResDiffPos
 from aptrend import ApTrend
 from kfiles import read_input_file, read_res_file
-
-def get_matchings(name, data, is_first):
-    
-    mat = []
-    res = [0, 0, 0]
-    val_res = ""
-    
-    for d in data:
-        if is_first:
-            data_name = d[R_NAME_1_COL]
-        else:
-            data_name = d[R_NAME_2_COL]
-            
-        if name == data_name:
-            r = d[FIRST_R_COL:]
-            mat.append(r)
-            res = [x + y for x, y in zip(res, SUM_DIF_POS[r[R_NAME_2_COL]])]
-            
-    mx = max(res)
-    
-    for i in range(len(NAMES_AP)):
-        if res[i] == mx:
-            val_res += NAMES_AP[i]
-            
-    return mat, val_res
+from utils import get_matchings
 
 def report_file_name(index):    
     
-    return REP_OUT_FILE_PREFIX + index + REP_OUT_FILE_EXT 
+    return REP_OUT_FILE_PREFIX + index + REP_OUT_FILE_EXT     
 
-def process_k(k_data, b1_res, a2_res, cl, index, pred_rf, pre, ex_mean):
+def do_report(index, k_data, cl, b1_res, a2_res, ex_mean, pre_rf = None, pre_df = None): 
+    
+    print "Generating report ..."
     
     rep_ap = []
     
@@ -108,11 +86,11 @@ def process_k(k_data, b1_res, a2_res, cl, index, pred_rf, pre, ex_mean):
                 f.write("-> %s (%s) - %s (%s)\n" % \
                         (k_name_1, cl_1[CL_POS_COL], k_name_2, cl_2[CL_POS_COL]))
                     
-                if pred_rf:
-                    f.write("His %s\n" % pred_rf[idx])
+                if pre_rf:
+                    f.write("Pre RF: %s\n" % pre_rf[idx])
                     
-                if pre:
-                    f.write("Pre %s\n" % pre[idx])
+                if pre_df:
+                    f.write("Pre DF: %s\n" % pre_df[idx])
                     
                 f.write("Ext %s\n" % ex_mean[idx])
                 
@@ -140,6 +118,9 @@ def process_k(k_data, b1_res, a2_res, cl, index, pred_rf, pre, ex_mean):
                     
                     f.write("Ap trend: %s -> %s %s\n" % \
                             (ap_t, val_res1, val_res2))
+                    
+                    f.write("Pred-> RF: %s NN: %s\n" % \
+                            (pre_rf[idx], pre_df[idx]))
                 
                 f.write("%s\n" % FIRST_SEP)
                 
@@ -170,17 +151,7 @@ def process_k(k_data, b1_res, a2_res, cl, index, pred_rf, pre, ex_mean):
     except IndexError as ie:
         print "IndexError saving file: '%s'" % out_file_name
          
-    return rep_ap, res_1, res_2              
-
-def do_report(index, k, cl, pred_rf, pre, ex_mean): 
-    
-    print "Generating report ..."
-    
-    b1_res = read_res_file(B1_RES_FILE)    
-    
-    a2_res = read_res_file(A2_RES_FILE)
-    
-    return process_k(k, b1_res, a2_res, cl, index, pred_rf, pre, ex_mean)
+    return rep_ap, res_1, res_2
     
 def report_generated(index):
     
