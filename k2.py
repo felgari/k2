@@ -26,7 +26,7 @@ from ctes import *
 from kparser import ProgramArgumentsException, ProgramArguments
 from kdat import KDat
 from clda import ClDat
-from resd import retrieve_res
+from resd import retrieve_res, calculate_res
 from extd import ExtD
 from pred import predict_k
 from ap import calc_ap_base, calc_q
@@ -78,11 +78,11 @@ def main(progargs):
     
         a2_res = read_res_file(A2_RES_FILE)
         
-        pre_1, pre_2 = predict_k(k.k, cl, b1_res, a2_res)
+        pre_1, sco_1, pre_2, sco_2 = predict_k(k.k, cl, b1_res, a2_res)
           
         rep_ap, res_1, res_2 = do_report(k.index, k.k, cl, 
                                          b1_res, a2_res, extd.mean,
-                                         pre_1, pre_2)
+                                         pre_1, sco_1, pre_2, sco_2)
         
         q = calc_q(rep_ap, res_1, res_2)
         

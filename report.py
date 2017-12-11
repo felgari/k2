@@ -34,7 +34,8 @@ def report_file_name(index):
     
     return REP_OUT_FILE_PREFIX + index + REP_OUT_FILE_EXT     
 
-def do_report(index, k_data, cl, b1_res, a2_res, ex_mean, pre_rf = None, pre_df = None): 
+def do_report(index, k_data, cl, b1_res, a2_res, ex_mean, 
+              pre_rf = None, sco_rf = None, pre_df = None, sco_df = None): 
     
     print "Generating report ..."
     
@@ -81,16 +82,13 @@ def do_report(index, k_data, cl, b1_res, a2_res, ex_mean, pre_rf = None, pre_df 
                 mat1, val_res1 = get_matchings(k_name_1, data, True)
                 mat2, val_res2 = get_matchings(k_name_2, data, False)
                 
+                res_1.append(val_res1)
+                res_2.append(val_res2)
+                
                 f.write("%s\n" % GEN_SEP)
                 
                 f.write("-> %s (%s) - %s (%s)\n" % \
                         (k_name_1, cl_1[CL_POS_COL], k_name_2, cl_2[CL_POS_COL]))
-                    
-                if pre_rf:
-                    f.write("Pre RF: %s\n" % pre_rf[idx])
-                    
-                if pre_df:
-                    f.write("Pre DF: %s\n" % pre_df[idx])
                     
                 f.write("Ext %s\n" % ex_mean[idx])
                 
@@ -113,14 +111,16 @@ def do_report(index, k_data, cl, b1_res, a2_res, ex_mean, pre_rf = None, pre_df 
                     
                     rep_ap.append(ap_t)
                     
-                    res_1.append(val_res1)
-                    res_2.append(val_res2)
-                    
                     f.write("Ap trend: %s -> %s %s\n" % \
                             (ap_t, val_res1, val_res2))
+                else:
+                    rep_ap.append(TREND_IG)
                     
-                    f.write("Pred-> RF: %s NN: %s\n" % \
-                            (pre_rf[idx], pre_df[idx]))
+                if pre_rf and sco_rf:
+                    f.write("Pre RF (%.1f): %s\n" % (sco_rf[idx], pre_rf[idx]))
+                    
+                if pre_df and sco_df:
+                    f.write("Pre DF (%.1f): %s\n" % (sco_df[idx], pre_df[idx]))
                 
                 f.write("%s\n" % FIRST_SEP)
                 
@@ -129,6 +129,9 @@ def do_report(index, k_data, cl, b1_res, a2_res, ex_mean, pre_rf = None, pre_df 
                         mat_cl = cl.b1_data(m[MAT_NAME_2_COL])
                     else:
                         mat_cl = cl.a2_data(m[MAT_NAME_2_COL])
+                        
+                    m[MAT_RES_COL] = CHR_TO_RES[m[MAT_RES_COL]]
+                        
                     f.write("%s (%s)\n" % (m, mat_cl[CL_POS_COL]))
                     
                 f.write("%s\n" % SECOND_SEP)
@@ -138,6 +141,9 @@ def do_report(index, k_data, cl, b1_res, a2_res, ex_mean, pre_rf = None, pre_df 
                         mat_cl = cl.b1_data(m[MAT_NAME_1_COL])
                     else:
                         mat_cl = cl.a2_data(m[MAT_NAME_1_COL])
+                        
+                    m[MAT_RES_COL] = CHR_TO_RES[m[MAT_RES_COL]]
+                        
                     f.write("%s (%s)\n" % (m, mat_cl[CL_POS_COL]))
                     
                 idx += 1
@@ -150,7 +156,7 @@ def do_report(index, k_data, cl, b1_res, a2_res, ex_mean, pre_rf = None, pre_df 
         print "KeyError saving file: '%s'" % out_file_name
     except IndexError as ie:
         print "IndexError saving file: '%s'" % out_file_name
-         
+    
     return rep_ap, res_1, res_2
     
 def report_generated(index):

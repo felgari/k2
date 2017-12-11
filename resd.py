@@ -53,12 +53,13 @@ class Res(object):
         self._vi_g = []
         self._min = []
         self._type = the_type
-        self._j = the_j        
+        self._j = the_j       
+        self._alt_sco = '' 
         
     def __str__(self):
-        return "%s %d - %s %d -> %s" % (self._lo, len(self._lo_g), 
+        return "%s %d - %s %d -> %s %s" % (self._lo, len(self._lo_g), 
                                         self._vi, len(self._vi_g),
-                                        self._min) 
+                                        self._min, self._alt_sco) 
         
     @property
     def next(self):
@@ -110,6 +111,10 @@ class Res(object):
     @sco.setter
     def sco(self, the_sco):
         self._sco = the_sco
+        
+    @property
+    def alt_sco(self):
+        return self._alt_sco
         
     @property
     def lo_g(self):
@@ -209,7 +214,28 @@ class Res(object):
         
     def add_m(self, line): 
         self._min.append(int(line))
+
+    def add_alt(self):
         
+        self._alt_sco = MAX_IS_SECOND
+        
+        dif = len(self._lo_g) - len(self._vi_g)
+        
+        if dif != 0:  
+            
+            if abs(dif) > MIN_DIF or \
+                ( len(self._min) > 0 and self._min[-1] > MAX_MIN ):
+                if dif > 0:
+                    self._alt_sco = MAX_IS_FIRST
+                else:
+                    self._alt_sco = MAX_IS_THIRD
+                    
+            elif dif > 0:
+                self._alt_sco = MAX_IS_FOURTH
+                
+            else:
+                self._alt_sco = MAX_IS_FIFTH
+
     def add_line(self, lin):
         
         if self.is_lo:
@@ -231,6 +257,8 @@ class Res(object):
     def check_coherence(self):              
 
         coherent = True
+        
+        self.add_alt()
         
         if not self._lo:
             print "No value for lo."
@@ -330,12 +358,11 @@ class ResData(object):
                             
                 current_res.add_line(lin)
                 
-        if current_res:
+        if current_res and current_res.check_coherence():
             res_list.append(current_res)
             
         return res_list
-    
-    @staticmethod
+
     def _load_lines(lines, file_type, j):
         
         status = LO_RES
@@ -525,7 +552,7 @@ def generate_res(res):
         else:
             val = MAX_IS_THIRD
         
-        new_row = [r.j, r.lo, r.vi, r.sco, len_lo, len_vi, val]
+        new_row = [r.j, r.lo, r.vi, r.sco, len_lo, len_vi, r.alt_sco]
         
         if r.type == TYPE_1_COL:
             b1_res.append(new_row)
@@ -535,17 +562,21 @@ def generate_res(res):
     save_file(B1_RES_FILE, b1_res)
     save_file(A2_RES_FILE, a2_res)           
         
+def calculate_res():
+    
+    res = ResData()
+    
+    res.process_res()
+    
+    generate_res(res.all_res)
+
 def retrieve_res():   
     
     print "Retrieving res ..."
     
     ResData._scrap_res_data()     
     
-    res = ResData() 
-    
-    res.process_res()        
-    
-    generate_res(res.all_res)  
+    calculate_res()  
 
 def load_res():
     
