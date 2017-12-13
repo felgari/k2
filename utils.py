@@ -42,6 +42,16 @@ def get_matchings(name, data, is_first):
     
     for i in range(len(NAMES_AP)):
         if res[i] == mx:
-            val_res += NAMES_AP[i]
+            val_res += CHR_TO_RES[NAMES_AP[i]]
             
-    return mat, val_res
+    final_val = ""       
+        
+    for v in CURRENT_MAX:
+        try:
+            val_res.index(v)
+            
+            final_val += v
+        except ValueError:
+            pass
+            
+    return mat, final_val
