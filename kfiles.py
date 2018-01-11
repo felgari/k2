@@ -188,8 +188,9 @@ def save_all_data(k, extd, ap, rep_ap, res_1, res_2, q, pre_1, pre_2):
                                        k.k[i][NAME_VI_COL], CSV_DELIMITER_TAB,
                                        CSV_DELIMITER_TAB.join(str(e) for e in row)))
                 else:
-                    f.write("%s %s %s\n" % (K_UNKNOWN_NAME, CSV_DELIMITER_TAB, 
-                                            K_UNKNOWN_NAME))
+                    f.write("%s%s%s%s%s\n" % (K_UNKNOWN_NAME, CSV_DELIMITER_TAB, 
+                                            K_UNKNOWN_NAME, CSV_DELIMITER_TAB, 
+                                            CSV_DELIMITER_TAB.join(str(e) for e in DEFAULT_ROW)))
             
         print "File with all data saved in: %s" % full_path_name
            

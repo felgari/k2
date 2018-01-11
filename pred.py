@@ -182,59 +182,61 @@ def gen_hist(k, cl, b1_res, a2_res):
         
         k_name_1 = k_elt[K_NAME_1_COL]
         k_name_2 = k_elt[K_NAME_2_COL]
-        data = b1_res
-        elt_type = TYPE_1_COL
-        cl_1 = cl.b1_data(k_name_1)
-        cl_2 = cl.b1_data(k_name_2)
         
-        if len(cl_1) == 0:
-            data = a2_res
-            elt_type = TYPE_2_COL
-            cl_1 = cl.a2_data(k_name_1)
-            cl_2 = cl.a2_data(k_name_2)
+        if k_name_1 <> K_UNKNOWN_NAME and k_name_1 <> K_UNKNOWN_NAME:
+            data = b1_res
+            elt_type = TYPE_1_COL
+            cl_1 = cl.b1_data(k_name_1)
+            cl_2 = cl.b1_data(k_name_2)
             
-        cl_lo = [cl_1[i] for i in LO_D_RANGE]
-        cl_vi = [cl_2[i] for i in VI_D_RANGE]
-        
-        pos_lo = cl_1[CL_POS]
-        pos_vi = cl_2[CL_POS]
-        
-        dif_pos = pos_vi - pos_lo
-        
-        to_pred_data.append(dif_pos)
-        
-        to_pred_data.extend(cl_lo)
-        to_pred_data.extend(cl_vi)
-        
-        mat1, val_res1 = get_matchings(k_name_1, data, True)
-        mat2, val_res2 = get_matchings(k_name_2, data, False)
-        
-        for m in mat1:
-            name = m[MAT_NAME_2_COL]
-            if elt_type == TYPE_1_COL:
-                cl_data = cl.b1_data(name)
-            else:
-                cl_data = cl.a2_data(name)
+            if len(cl_1) == 0:
+                data = a2_res
+                elt_type = TYPE_2_COL
+                cl_1 = cl.a2_data(k_name_1)
+                cl_2 = cl.a2_data(k_name_2)
                 
-            h = [cl_data[CL_POS] - pos_lo]
-            h.extend(cl_lo)
-            h.extend([cl_data[i] for i in VI_D_RANGE])
-            h.extend(m[MAT_RES_COL])
-            hist_data.append(h)
-        
-        for m in mat2:
-            name = m[MAT_NAME_1_COL]
-            if elt_type == TYPE_1_COL:
-                cl_data = cl.b1_data(name)
-            else:
-                cl_data = cl.a2_data(name)
-                
-            h = [pos_vi - cl_data[CL_POS]]
-            h.extend([cl_data[i] for i in LO_D_RANGE])
-            h.extend(cl_vi)
-            h.extend(m[MAT_RES_COL])
-            hist_data.append(h)
+            cl_lo = [cl_1[i] for i in LO_D_RANGE]
+            cl_vi = [cl_2[i] for i in VI_D_RANGE]
             
+            pos_lo = cl_1[CL_POS]
+            pos_vi = cl_2[CL_POS]
+            
+            dif_pos = pos_vi - pos_lo
+            
+            to_pred_data.append(dif_pos)
+            
+            to_pred_data.extend(cl_lo)
+            to_pred_data.extend(cl_vi)
+            
+            mat1, val_res1 = get_matchings(k_name_1, data, True)
+            mat2, val_res2 = get_matchings(k_name_2, data, False)
+            
+            for m in mat1:
+                name = m[MAT_NAME_2_COL]
+                if elt_type == TYPE_1_COL:
+                    cl_data = cl.b1_data(name)
+                else:
+                    cl_data = cl.a2_data(name)
+                    
+                h = [cl_data[CL_POS] - pos_lo]
+                h.extend(cl_lo)
+                h.extend([cl_data[i] for i in VI_D_RANGE])
+                h.extend(m[MAT_RES_COL])
+                hist_data.append(h)
+            
+            for m in mat2:
+                name = m[MAT_NAME_1_COL]
+                if elt_type == TYPE_1_COL:
+                    cl_data = cl.b1_data(name)
+                else:
+                    cl_data = cl.a2_data(name)
+                    
+                h = [pos_vi - cl_data[CL_POS]]
+                h.extend([cl_data[i] for i in LO_D_RANGE])
+                h.extend(cl_vi)
+                h.extend(m[MAT_RES_COL])
+                hist_data.append(h)
+                
         data_for_predict.append(hist_data)
         data_to_predict.append(to_pred_data)
     
@@ -256,7 +258,13 @@ def predict_k(k, cl, b1_res, a2_res):
             print "Predicting: %s vs %s" % (k[i][K_NAME_1_COL], 
                                             k[i][K_NAME_2_COL])
             
-            p1, s1, p2, s2 = predict(data_for_predict[i], data_to_predict[i])
+            if len(data_for_predict[i]) > 0 and len(data_to_predict[i]) > 0:
+                p1, s1, p2, s2 = predict(data_for_predict[i], data_to_predict[i])
+            else:
+                p1 = [TREND_IG]
+                s1 = 0.0
+                p2 = [TREND_IG]
+                s2 = 0.0
             
             pre_rf.extend(p1)
             sco_rf.append(s1)
