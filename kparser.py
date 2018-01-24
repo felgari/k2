@@ -55,7 +55,7 @@ class ProgramArguments(object):
         self.__parser.add_argument("-i", dest="i", metavar="index",
                                    default=DEFAULT_INDEX,
                                    help="Index to use.", type=int, 
-                                   choices=xrange(1, 100))              
+                                   choices=iter(range(100)))              
         
         self.__parser.add_argument("-r", dest="r", action="store_true", 
                                    help="Retrieve res.")   

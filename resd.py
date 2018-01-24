@@ -209,8 +209,8 @@ class Res(object):
         elif vi_g_val > vi_g_len:
             self._vi_g.append(sum_lo_vi_g + 1)
         else:
-            print "Error setting min in %s %s with: %d %d - %d %d" % \
-                (self.lo, self.vi, lo_g_val, lo_g_len, vi_g_val, vi_g_len)
+            print("Error setting min in %s %s with: %d %d - %d %d" %
+                (self.lo, self.vi, lo_g_val, lo_g_len, vi_g_val, vi_g_len))
         
     def add_m(self, line): 
         self._min.append(int(line))
@@ -261,15 +261,15 @@ class Res(object):
         self.add_alt()
         
         if not self._lo:
-            print "No value for lo."
+            print("No value for lo.")
             coherent = False 
             
         if not self._vi:
-            print "No value for vi."
+            print("No value for vi.")
             coherent = False 
             
         if self.sum_g != len(self._min):
-            print "g values does not match min ones."            
+            print("g values does not match min ones.")            
 
         return coherent
 
@@ -289,21 +289,21 @@ class ResData(object):
         
         full_path_name = os.path.join(DATA_PATH, out_file_name)
         
-        print "Saving file: %s" % full_path_name
+        print("Saving file: %s" % full_path_name)
         
         try:
             
             with open(full_path_name, 'w') as f:
         
                 for d in data:
+
                     if type(d) is int:
                         f.write("%d\n" % d)
                     else:
-                        f.write("%s\n" % 
-                                un.normalize('NFKD', d).encode('ascii','ignore'))
+                        f.write("%s\n" % d)
         
         except IOError as ioe:
-             print "Error saving file: '%s'" % full_path_name  
+             print("Error saving file: '%s'" % full_path_name)  
         
     @staticmethod
     def _scrap_res(max_range, file_dir, url_prefix, data_size): 
@@ -316,7 +316,7 @@ class ResData(object):
                                      RES_FILE_PREFIX + i_str + INPUT_FILE_NAME_EXT)
             
             if not os.path.exists(file_name):   
-                print "Retrieving data for file: %s" % file_name  
+                print("Retrieving data for file: %s" % file_name)  
                 url = url_prefix + i_str   
                 data = KScrap.res_scraping(url)
                 
@@ -324,8 +324,8 @@ class ResData(object):
                 if len(data) > data_size * 4:                     
                     ResData._save_res_data(file_name, data)
                 else:
-                    print "Exiting as no data has been retrieved for: %s." % \
-                        file_name
+                    print("Exiting as no data has been retrieved for: %s." %
+                          file_name)
                     break                    
       
     @staticmethod 
@@ -352,7 +352,7 @@ class ResData(object):
                     
                     current_res = None
                 else:
-                    print "Discarded: %s" % current_res
+                    print("Discarded: %s" % current_res)
             
                 current_res = Res(file_type, j)
                             
@@ -418,7 +418,7 @@ class ResData(object):
         
         j = ResData._extract_j(full_path_name)
         
-        print "Processing res in: %s" % full_path_name
+        print("Processing res in: %s" % full_path_name)
         
         with open(full_path_name, 'r') as f:
             for line in f:
@@ -517,10 +517,10 @@ def save_file(file_name, data):
     
     data_sorted = sorted(data, key=lambda item: item[0])    
     
-    print "Saving %d rows of data in: %s" % (len(data_sorted), full_path_name)
+    print("Saving %d rows of data in: %s" % (len(data_sorted), full_path_name))
     
     try:                
-        with open(full_path_name, 'wb') as fw:
+        with open(full_path_name, 'wt') as fw:
             
             writer = csv.writer(fw, delimiter=',')
     
@@ -530,10 +530,10 @@ def save_file(file_name, data):
                 # Write a row.
                 writer.writerow(d)   
     except csv.Error as e:
-        print "Error writing data in CSV file: '%s'" % full_path_name                
+        print("Error writing data in CSV file: '%s'" % full_path_name)                
                 
     except IOError as ioe:
-        print "Error writing CSV file: '%s'" % full_path_name      
+        print("Error writing CSV file: '%s'" % full_path_name)      
                 
 def generate_res(res):
     
@@ -572,7 +572,7 @@ def calculate_res():
 
 def retrieve_res():   
     
-    print "Retrieving res ..."
+    print("Retrieving res ...")
     
     ResData._scrap_res_data()     
     
@@ -580,7 +580,7 @@ def retrieve_res():
 
 def load_res():
     
-    print "Loading res ..."
+    print("Loading res ...")
     
     res = ResData() 
     
@@ -591,8 +591,8 @@ def load_res():
 if __name__ == "__main__":  
     
     if len(sys.argv) == NUM_ARGS:
-        print "Analyzing data. No index must be provided to retrieve data."         
+        print("Analyzing data. No index must be provided to retrieve data.")         
         sys.exit(analyze_res(sys.argv[1]))
     else:
-        print "Only retrieving data. An index must be provided to analyze."         
+        print("Only retrieving data. An index must be provided to analyze.")         
         retrieve_res()

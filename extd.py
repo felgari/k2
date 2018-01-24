@@ -141,27 +141,27 @@ class ExtD(object):
         if sum(self._lm[0]):
             mean_sources.append(self._lm)
         else:
-            print "Ignoring lm for mean."
+            print("Ignoring lm for mean.")
             
         if sum(self._ve[0]):
             mean_sources.append(self._ve)
         else:
-            print "Ignoring ve for mean."
+            print("Ignoring ve for mean.")
             
         if sum(self._qu[0]):
             mean_sources.append(self._qu)
         else:
-            print "Ignoring qu for mean."
+            print("Ignoring qu for mean.")
             
         if sum(self._q1[0]):
             mean_sources.append(self._q1)
         else:
-            print "Ignoring q1 for mean."
+            print("Ignoring q1 for mean.")
             
         if sum(self._cq[0]):
             mean_sources.append(self._cq)
         else:
-            print "Ignoring cq for mean."
+            print("Ignoring cq for mean.")
         
         if len(mean_sources) > 1:
             for i in range(NUM_ROWS):
@@ -182,7 +182,7 @@ class ExtD(object):
         
         full_path_name = os.path.join(DATA_PATH, file_name) 
         
-        print "Reading data from file: %s" % full_path_name
+        print("Reading data from file: %s" % full_path_name)
         
         try:
             with open(full_path_name, "r") as f:
@@ -194,36 +194,36 @@ class ExtD(object):
                     if len(l_txt):                  
                         if l_txt.find(LM_TEXT) >= 0:
                             self._lm = extract_list_text(l_txt, NUM_COLS_LM)
-                            print "Read %dx%d from file for LM" % \
-                                (len(self._lm), len(self._lm[0]))
+                            print("Read %dx%d from file for LM" %
+                                  (len(self._lm), len(self._lm[0])))
                                 
                         elif l_txt.find(VE_TEXT) >= 0:
                             self._ve = extract_list_text(l_txt, NUM_COLS_VE)
-                            print "Read %dx%d from file for VE" % \
-                                (len(self._ve), len(self._ve[0]))
+                            print("Read %dx%d from file for VE" %
+                                  (len(self._ve), len(self._ve[0])))
                                 
                         elif l_txt.find(QU_TEXT) >= 0:
                             self._qu = extract_list_text(l_txt, NUM_COLS_QU)
-                            print "Read %dx%d from file for QU" % \
-                                (len(self._qu), len(self._qu[0]))
+                            print("Read %dx%d from file for QU" %
+                                  (len(self._qu), len(self._qu[0])))
                                 
                         elif l_txt.find(Q1_TEXT) >= 0:
                             self._q1 = extract_list_text(l_txt, NUM_COLS_Q1)
-                            print "Read %dx%d from file for Q1" % \
-                                (len(self._q1), len(self._q1[0]))
+                            print("Read %dx%d from file for Q1" %
+                                  (len(self._q1), len(self._q1[0])))
                                 
                         elif l_txt.find(CQ_TEXT) >= 0:
                             self._cq = extract_list_text(l_txt, NUM_COLS_CQ)
-                            print "Read %dx%d from file for CQ" % \
-                                (len(self._cq), len(self._cq[0]))
+                            print("Read %dx%d from file for CQ" %
+                                  (len(self._cq), len(self._cq[0])))
                                 
                         elif l_txt.find(CQP_TEXT) >= 0:
                             self._cqp = extract_list_text(l_txt, NUM_COLS_CQ)
-                            print "Read %dx%d from file for CQP" % \
-                                (len(self._cqp), len(self._cqp[0]))
+                            print("Read %dx%d from file for CQP" %
+                                  (len(self._cqp), len(self._cqp[0])))
                                 
         except IOError as ioe:
-            print "ERROR: Reading file '%s'" % full_path_name  
+            print("ERROR: Reading file '%s'" % full_path_name)  
             success = False
             
         return success
@@ -245,10 +245,10 @@ class ExtD(object):
                 f.write("%s %s %s\n\n" % (CQ_TEXT, SCR_TXT_DELIM, str(self._cq)))
                 f.write("%s %s %s\n\n" % (CQP_TEXT, SCR_TXT_DELIM, str(self._cqp)))
             
-            print "Data scrapped saved in: %s" % full_path_name
+            print("Data scrapped saved in: %s" % full_path_name)
             
         except IOError as ioe:
-             print "Error saving file: '%s'" % full_path_name  
+             print("Error saving file: '%s'" % full_path_name)  
 
     def _save_mean(self):
         
@@ -258,7 +258,7 @@ class ExtD(object):
 
     def load(self):
         
-        print "Loading external data ..."
+        print("Loading external data ...")
         
         if not self._read_extd():    
             

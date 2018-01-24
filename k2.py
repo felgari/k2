@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
 # Copyright (c) 2017 Felipe Gallego. All rights reserved.
@@ -52,13 +52,13 @@ def retrieve_data(index):
         if progargs.retrieve_res:
             retrieve_res()
         else:
-            print "Retrieving of res not asked, using existing res ..."
+            print("Retrieving of res not asked, using existing res ...")
             
         extd = ExtD(k.index)
         
         extd.load()
     else:
-        print "Error loading k ..."
+        print("Error loading k ...")
         success = False
         
     return success, k, cl, extd
@@ -67,7 +67,7 @@ def main(progargs):
     """Main function.
     """    
     
-    print "Here we go ...!!!"
+    print("Here we go ...!!!")
         
     success, k, cl, extd = retrieve_data(progargs.index)
     
@@ -89,9 +89,9 @@ def main(progargs):
         save_all_data(k, extd, ap, rep_ap, res_1, res_2, q, pre_1, pre_2)
         
     else:
-        print "Source data couldn't be loaded, no calculations were made."
+        print("Source data couldn't be loaded, no calculations were made.")
         
-    print "Program finished."
+    print("Program finished.")
     
     return 0
 
@@ -104,4 +104,4 @@ if __name__ == "__main__":
         
         sys.exit(main(progargs))   
     except ProgramArgumentsException as pae:
-        print pae       
+        print(pae)

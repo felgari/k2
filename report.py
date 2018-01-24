@@ -37,7 +37,7 @@ def report_file_name(index):
 def do_report(index, k_data, cl, b1_res, a2_res, ex_mean, 
               pre_rf = None, sco_rf = None, pre_df = None, sco_df = None): 
     
-    print "Generating report ..."
+    print("Generating report ...")
     
     rep_ap = []
     
@@ -57,7 +57,7 @@ def do_report(index, k_data, cl, b1_res, a2_res, ex_mean,
     
     aptr = ApTrend()
     
-    print "Saving to file: %s" % out_file_name
+    print("Saving to file: %s" % out_file_name)
                     
     try:    
     
@@ -68,7 +68,7 @@ def do_report(index, k_data, cl, b1_res, a2_res, ex_mean,
                 k_name_1 = k_elt[K_NAME_1_COL]
                 k_name_2 = k_elt[K_NAME_2_COL]
                 
-                if k_name_1 <> K_UNKNOWN_NAME and k_name_2 <> K_UNKNOWN_NAME:
+                if k_name_1 != K_UNKNOWN_NAME and k_name_2 != K_UNKNOWN_NAME:
                 
                     data = b1_res
                     elt_type = TYPE_1_COL
@@ -157,11 +157,11 @@ def do_report(index, k_data, cl, b1_res, a2_res, ex_mean,
         aptr.write_data(index)
                     
     except IOError as ioe:
-        print "IOError saving file: '%s'" % out_file_name 
+        print("IOError saving file: '%s'" % out_file_name)
     except KeyError as ke:
-        print "KeyError saving file: '%s'" % out_file_name
+        print("KeyError saving file: '%s'" % out_file_name)
     except IndexError as ie:
-        print "IndexError saving file: '%s'" % out_file_name
+        print("IndexError saving file: '%s'" % out_file_name)
     
     return rep_ap, res_1, res_2
     
@@ -174,4 +174,4 @@ if __name__ == "__main__":
     if len(sys.argv) == NUM_ARGS:
         sys.exit(do_report(sys.argv[1]))
     else:
-        print "The index is needed as argument."
+        print("The index is needed as argument.")

@@ -69,7 +69,7 @@ class AvPos(object):
     
     def _get_cl_files(self, dir):
         
-        print "Searching cl files in: %s" % dir
+        print("Searching cl files in: %s" % dir)
         
         return [fn for fn in os.listdir(dir) 
                     if fn.startswith(PREFIX_CL_FILE_NAME)]

@@ -87,7 +87,7 @@ class ResDiffPos(object):
             
             self._a2_dif = self._calc_from_res(A2_RES_FILE, self._cl.a2)
         else:
-            print "ERROR: Differences by positions no calculated, Cl data not loaded."
+            print("ERROR: Differences by positions no calculated, Cl data not loaded.")
             
     def trend(self, pos1, pos2, elt_type):
         

@@ -19,6 +19,8 @@
 """
 
 import sys
+import os
+from subprocess import call
 import numpy as np
 from sklearn.ensemble import RandomForestClassifier
 from sklearn import metrics
@@ -83,7 +85,7 @@ def eval_predict_nn(prd_data, prd_cl_data, eval_data, eval_cl_data):
     np_eval_data = np.matrix(eval_data).astype(float)
     np_eval_cl_data = np.array([CL_TO_NUM[x] for x in eval_cl_data])
     
-    nn = skflow.TensorFlowEstimator(model_fn=nn_model, n_classes=len(CLASSES_PRE))
+    nn = skflow.Estimator(model_fn=nn_model, n_classes=len(CLASSES_PRE))
     
     nn.fit(np_prd_data, np_prd_cl_data, logdir = LOG_DIR)
     
@@ -108,7 +110,7 @@ def predict_nn(hist_data, cl_data, data_to_predict):
     np_hist_data, np_prd_data, np_classes_data = \
         prepare_data_for_nn(hist_data, data_to_predict, cl_data)
     
-    nn = skflow.TensorFlowEstimator(model_fn=nn_model, n_classes=len(CLASSES_PRE))
+    nn = skflow.Estimator(model_fn=nn_model, n_classes=len(CLASSES_PRE))
     
     nn.fit(np_hist_data, np_classes_data, logdir = LOG_DIR)
     
@@ -118,6 +120,38 @@ def predict_nn(hist_data, cl_data, data_to_predict):
     prd = nn.predict_proba(np_prd_data) 
     
     return link_perc_to_cl(prd, CLASSES_PRE), score
+    
+def predict_tf(hist_data, cl_data, data_to_predict):
+    
+    call(["rm", MODEL_DIR + "/*"])
+
+    # Classifier.
+    feature_columns = [tf.feature_column.numeric_column("x",
+                                                        shape=len(hist_data[0]))]
+
+    classifier = tf.estimator.DNNClassifier(feature_columns=feature_columns,
+                                            hidden_units=NN_LEVELS,
+                                            n_classes=len(CLASSES_PRE),
+                                            model_dir=MODEL_DIR)
+
+    # Train.
+    train_input_fn = tf.estimator.inputs.numpy_input_fn(x={"x": np.matrix(hist_data)},
+                                                        y=np.array(cl_data),
+                                                        num_epochs=None,
+                                                        shuffle=False)
+
+    classifier.train(input_fn=train_input_fn, steps=2000)
+
+    # Predict.
+    predict_input_fn = tf.estimator.inputs.numpy_input_fn(x={"x": np.array([data_to_predict])},
+                                                          num_epochs=1,
+                                                          shuffle=False)
+
+    prd = list(classifier.predict(input_fn=predict_input_fn))
+
+    prob = [p["probabilities"] for p in prd]
+
+    return [int(p*100) for p in prob[0]], 0.0
 
 def predict_rf(hist_data, cl_data, data_to_predict):
     
@@ -130,12 +164,11 @@ def predict_rf(hist_data, cl_data, data_to_predict):
     
     rf.fit(np_hist_data, np_classes_data)
     
-    score = metrics.accuracy_score(np_classes_data, rf.predict(np_hist_data))
-    print("Accuracy RF: %f" % score)
+    #score = metrics.accuracy_score(np_classes_data, rf.predict(np_hist_data))
     
     prd = rf.predict_proba(np_prd_data)
 
-    return link_perc_to_cl(prd, np.ndarray.tolist(rf.classes_)), score
+    return [int(p*100) for p in prd[0]], 0.0
 
 def extract_pred_data(pred_data):
     
@@ -151,10 +184,12 @@ def predict(pred_data, data_to_predict):
         
     hist_data, cl_data = extract_pred_data(pred_data)
     
+    os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
+    
     if len(hist_data) and len(data_to_predict):
         
         data_out_rf, score_rf = predict_rf(hist_data, cl_data, data_to_predict)
-        data_out_nn, score_nn = predict_nn(hist_data, cl_data, data_to_predict)
+        data_out_nn, score_nn = predict_tf(hist_data, cl_data, data_to_predict)
         
     return data_out_rf, score_rf, data_out_nn, score_nn
 
@@ -183,7 +218,7 @@ def gen_hist(k, cl, b1_res, a2_res):
         k_name_1 = k_elt[K_NAME_1_COL]
         k_name_2 = k_elt[K_NAME_2_COL]
         
-        if k_name_1 <> K_UNKNOWN_NAME and k_name_1 <> K_UNKNOWN_NAME:
+        if k_name_1 != K_UNKNOWN_NAME and k_name_1 != K_UNKNOWN_NAME:
             data = b1_res
             elt_type = TYPE_1_COL
             cl_1 = cl.b1_data(k_name_1)
@@ -221,7 +256,7 @@ def gen_hist(k, cl, b1_res, a2_res):
                 h = [cl_data[CL_POS] - pos_lo]
                 h.extend(cl_lo)
                 h.extend([cl_data[i] for i in VI_D_RANGE])
-                h.extend(m[MAT_RES_COL])
+                h.append(MAT_CONV[m[MAT_RES_COL]])
                 hist_data.append(h)
             
             for m in mat2:
@@ -234,7 +269,7 @@ def gen_hist(k, cl, b1_res, a2_res):
                 h = [pos_vi - cl_data[CL_POS]]
                 h.extend([cl_data[i] for i in LO_D_RANGE])
                 h.extend(cl_vi)
-                h.extend(m[MAT_RES_COL])
+                h.append(MAT_CONV[m[MAT_RES_COL]])
                 hist_data.append(h)
                 
         data_for_predict.append(hist_data)
@@ -255,8 +290,8 @@ def predict_k(k, cl, b1_res, a2_res):
         
         for i in range(len(data_for_predict)):
             
-            print "Predicting: %s vs %s" % (k[i][K_NAME_1_COL], 
-                                            k[i][K_NAME_2_COL])
+            print("Predicting: %s vs %s" % (k[i][K_NAME_1_COL], 
+                                            k[i][K_NAME_2_COL]))
             
             if len(data_for_predict[i]) > 0 and len(data_to_predict[i]) > 0:
                 p1, s1, p2, s2 = predict(data_for_predict[i], data_to_predict[i])
@@ -266,14 +301,17 @@ def predict_k(k, cl, b1_res, a2_res):
                 p2 = [TREND_IG]
                 s2 = 0.0
             
-            pre_rf.extend(p1)
+            pre_rf.append(p1)
             sco_rf.append(s1)
-            pre_df.extend(p2)
+            pre_df.append(p2)
             sco_df.append(s2)
     else:
-        print "ERROR: Length of data for prediction don't match: %d %d" % \
-            (len(data_for_predict), len(data_to_predict))
+        print("ERROR: Length of data for prediction don't match: %d %d" %
+            (len(data_for_predict), len(data_to_predict)))
             
+    print(pre_rf)
+    print(pre_df)
+    
     return pre_rf, sco_rf, pre_df, sco_df
             
             

@@ -120,7 +120,7 @@ def data_calculation(r_group):
             elif sco[0] == sco[1]:
                 s = MAX_IS_SECOND
             
-            elements.append([r[RES_J], names[RES_NAME_LO_POS], 
+            elements.append([r[RES_J_POS], names[RES_NAME_LO_POS], 
                              names[RES_NAME_VI_POS], s])
         
     return group_stats, elements
@@ -197,10 +197,10 @@ def compile_pred_data(res):
     data_num = []
     
     # Compile res data.
-    print "Number of groups: %d" % len(res.all_res)
+    print("Number of groups: %d" % len(res.all_res))
     
     for r in res.all_res:
-        print "Group of %d elements." % len(r)
+        print("Group of %d elements." % len(r))
         
         data_num.append(len(r))
         
@@ -229,8 +229,8 @@ def simul_data(the_data, train_num, cl_names):
                 
         rf_score, nn_score = eval_predict(data_for_model, data_for_eval)
             
-        print "%s -> Accuracy RF: %f Accuracy NN: %f" % \
-            (name, rf_score, nn_score)
+        print("%s -> Accuracy RF: %f Accuracy NN: %f" %
+              (name, rf_score, nn_score))
             
         simul_resul.append([name, rf_score, nn_score])
         
@@ -246,16 +246,16 @@ def simul(lo_data, vi_data, data_num, cl_data):
                                   
         chk_num = num - train_num
         
-        print "%s -> Total: %d Train: %d Check: %d Pred: %d" % \
-            (rd, dn, train_num, chk_num, dn - num)
+        print("%s -> Total: %d Train: %d Check: %d Pred: %d" %
+              (rd, dn, train_num, chk_num, dn - num))
             
-        print "Simulating LO ..."
+        print("Simulating LO ...")
         lo_simul = simul_data(lo_data, train_num, [e[CL_NAME_COL] for e in cl])
         
         save_data_to_csv(SIMUL_LO_PREFIX_FILE_NAME + rd + OUTPUT_FILE_NAME_EXT,
                          lo_simul, SIMUL_DATA_PATH)
         
-        print "Simulating VI ..."
+        print("Simulating VI ...")
         vi_simul = simul_data(vi_data, train_num, [e[CL_NAME_COL] for e in cl])
         
         save_data_to_csv(SIMUL_VI_PREFIX_FILE_NAME + rd + OUTPUT_FILE_NAME_EXT,
@@ -265,7 +265,7 @@ def main():
     """Main function.
     """    
     
-    print "Here we go ...!!!"
+    print("Here we go ...!!!"-)
     
     res = load_res()
     

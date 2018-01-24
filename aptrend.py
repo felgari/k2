@@ -74,9 +74,9 @@ class ApTrend(object):
         
         out_file_name = os.path.join(DATA_PATH, AP_FILE_TREND_PREFIX + str(index) + AP_FILE_TREND_EXT)
         
-        print "Saving trend ap in: %s" % out_file_name    
+        print("Saving trend ap in: %s" % out_file_name)
                     
-        with open(out_file_name, "wb") as csvfile:
+        with open(out_file_name, "wt") as csvfile:
             csvwriter = csv.writer(csvfile, delimiter=CSV_DELIMITER)            
             
             for ap_d in self._ap:

@@ -29,10 +29,10 @@ def read_input_file(input_file_name):
     
     full_path_name = os.path.join(DATA_PATH, input_file_name)
     
-    print "Reading local file: %s" % full_path_name
+    print("Reading local file: %s" % full_path_name)
 
     try:
-        with open(full_path_name, 'rb') as f:
+        with open(full_path_name, 'rt') as f:
             
             reader = csv.reader(f)
         
@@ -40,20 +40,20 @@ def read_input_file(input_file_name):
                 if row[0].isdigit():
                     data.append(row)
                 else:
-                    print "Ignoring line in file %s, maybe a header: %s" % \
-                        (full_path_name, row)
+                    print("Ignoring line in file %s, maybe a header: %s" %
+                        (full_path_name, row))
         
     except csv.Error:
-        print "ERROR: reading file %s" % full_path_name
+        print("ERROR: reading file %s" % full_path_name)
         data = []
     except IOError:
-        print "ERROR: reading file %s" % full_path_name
+        print("ERROR: reading file %s" % full_path_name)
         data = []
         
     if len(data):
-        print "Read: %dx%d" % (len(data), len(data[0]))
+        print("Read: %dx%d" % (len(data), len(data[0])))
     else:
-        print "ERROR: No data read."
+        print("ERROR: No data read.")
             
     return data
     
@@ -63,10 +63,10 @@ def read_res_file(input_file_name):
     
     full_path_name = os.path.join(DATA_PATH, input_file_name)
     
-    print "Reading res file: %s" % full_path_name
+    print("Reading res file: %s" % full_path_name)
 
     try:
-        with open(full_path_name, 'rb') as f:
+        with open(full_path_name, 'rt') as f:
             
             reader = csv.reader(f)
         
@@ -80,12 +80,12 @@ def read_res_file(input_file_name):
                     res_data.append(red_row)
         
     except csv.Error:
-        print "ERROR: reading file %s" % full_path_name
+        print("ERROR: reading file %s" % full_path_name)
     except IOError:
-        print "ERROR: reading file %s" % full_path_name
+        print("ERROR: reading file %s" % full_path_name)
         
     if len(res_data):
-        print "Read: %dx%d" % (len(res_data), len(res_data[0]))
+        print("Read: %dx%d" % (len(res_data), len(res_data[0])))
             
     return res_data
 
@@ -96,7 +96,7 @@ def extract_list_text(txt, num):
     pos = txt.find(SCR_TXT_DELIM)
     txt_red = txt[pos + 1:].strip()
     
-    lst_from_txt = txt_red.translate(None, "[],\'").split()
+    lst_from_txt = txt_red.translate(str.maketrans(dict.fromkeys("[],\'"))).split()
 
     n = 0
     new_list = []
@@ -125,10 +125,10 @@ def save_data_to_csv(out_file_name, data, path = DATA_PATH):
             for d in data:            
                 f.write("%s\n" % CSV_DELIMITER.join(str(e) for e in d))
         
-        print "File saved: %s" % full_path_name
+        print("File saved: %s" % full_path_name)
            
     except IOError as ioe:
-         print "Error saving file: '%s'" % full_path_name
+         print("Error saving file: '%s'" % full_path_name)
          
 def save_all(k, extm, p, p_rf, ap_rf, p_nn, ap_nn, index):
     
@@ -136,7 +136,7 @@ def save_all(k, extm, p, p_rf, ap_rf, p_nn, ap_nn, index):
     
     full_path_name = os.path.join(DATA_PATH, out_file_name)
     
-    print "Saving all data to: %s" % full_path_name
+    print("Saving all data to: %s" % full_path_name)
     
     try:
 
@@ -149,10 +149,10 @@ def save_all(k, extm, p, p_rf, ap_rf, p_nn, ap_nn, index):
                        
                 f.write("%s\n" % CSV_DELIMITER.join(str(e) for e in row))
         
-        print "File saved: %s" % full_path_name
+        print("File saved: %s" % full_path_name)
            
     except IOError as ioe:
-         print "Error saving file: '%s'" % full_path_name
+         print("Error saving file: '%s'" % full_path_name)
          
 def save_all_data(k, extd, ap, rep_ap, res_1, res_2, q, pre_1, pre_2):
 
@@ -160,7 +160,7 @@ def save_all_data(k, extd, ap, rep_ap, res_1, res_2, q, pre_1, pre_2):
     
     full_path_name = os.path.join(DATA_PATH, out_file_name)
     
-    print "Saving all data to: %s" % full_path_name
+    print("Saving all data to: %s" % full_path_name)
     
     try:
 
@@ -192,9 +192,9 @@ def save_all_data(k, extd, ap, rep_ap, res_1, res_2, q, pre_1, pre_2):
                                             K_UNKNOWN_NAME, CSV_DELIMITER_TAB, 
                                             CSV_DELIMITER_TAB.join(str(e) for e in DEFAULT_ROW)))
             
-        print "File with all data saved in: %s" % full_path_name
+        print("File with all data saved in: %s" % full_path_name)
            
     except IOError as ioe:
-         print "Error saving file: '%s'" % full_path_name
+         print("Error saving file: '%s'" % full_path_name)
 
     

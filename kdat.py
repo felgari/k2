@@ -34,11 +34,11 @@ class KDat(object):
     def load(self):
         
         if self._index != DEFAULT_INDEX:
-            print "Let's go with the index provided: %s ..." % self._index
+            print("Let's go with the index provided: %s ..." % self._index)
             self._read_k()
             
         else:
-            print "No index provided, so looking for index and k data ..."
+            print("No index provided, so looking for index and k data ...")
             
         # If not read from local, retrieve from external source.
         if not self.loaded:
@@ -48,14 +48,14 @@ class KDat(object):
                 if self.loaded:
                     self._save_k()
                     
-                    print "k retrieved successfully for index %s" % self._index
+                    print("k retrieved successfully for index %s" % self._index)
                     
                 else:
-                    print "ERROR: k data not retrieved."
+                    print("ERROR: k data not retrieved.")
                     
             # If data isn't retrieved, update the index with the value received.
             except ScrapingException as se:
-                print "ERROR: %s" % se
+                print("ERROR: %s" % se)
         
     def _read_k(self):
         
@@ -71,8 +71,8 @@ class KDat(object):
         
         full_path_name = os.path.join(DATA_PATH, out_file_name)
         
-        print "Saving file: %s with %dx%d elements" % \
-            (full_path_name, len(self._k), len(self._k[0]))
+        print("Saving file: %s with %dx%d elements" %
+              (full_path_name, len(self._k), len(self._k[0])))
             
         try:
         
@@ -82,7 +82,7 @@ class KDat(object):
                     f.write("%s,%s,%s,%s\n" % (d[0], d[1], d[2], d[3]))
             
         except IOError as ioe:
-             print "Error saving file: '%s'" % full_path_name 
+             print("Error saving file: '%s'" % full_path_name)
         
     @property
     def k(self):

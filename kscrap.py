@@ -19,8 +19,6 @@
 """
 
 import requests
-import urllib2
-import httplib
 from bs4 import BeautifulSoup
 import unicodedata as un
 import json
@@ -48,20 +46,13 @@ class KScrap(object):
         
         bsObj = None
         
-        print "Reading page from: %s" % url
+        print("Reading page from: %s" % url)
         
-        try:    
-            _ = urllib2.urlopen(url)
-        except urllib2.HTTPError as he:
-            print(he)
-        except urllib2.URLError as ue:
-            print(ue)
-        else:
-            session = requests.Session()
+        bsObj = BeautifulSoup(requests.get(url).content, "lxml")
+        
 
-            req = session.get(url, headers=REQUEST_HEADERS)  
             
-            bsObj = BeautifulSoup(req.text, "lxml")
+            
                 
         return bsObj 
     
@@ -76,11 +67,12 @@ class KScrap(object):
         first = []
         second = []
         k_data = []
+        table = str.maketrans(dict.fromkeys("b'"))
         
         for cobj in bsObj.findAll(K_COBJ, K_COBJ_DICT):
             for eobj in cobj.findAll(K_EOBJ, K_EOBJ_NAME):
                 txt = eobj.get_text().strip()
-                txt_norm = un.normalize('NFKD', txt).encode('ascii','ignore')
+                txt_norm = un.normalize('NFKD', txt).encode('ascii','ignore').__str__()
                 pos2 = txt_norm.find(K_POS_1_SEP)
                 pos1 = txt_norm[:pos2].rfind(K_POS_2_SEP)
                 temp_index = txt_norm[pos1+1:pos2].strip()
@@ -88,12 +80,12 @@ class KScrap(object):
         for cobj in bsObj.findAll(K_COBJ_INF, K_COBJ_INF_DICT):
             for eobj in cobj.findAll(K_EOBJ_1, K_EOBJ_1_NAME):
                 txt = eobj.get_text().strip()
-                txt_norm = un.normalize('NFKD', txt).encode('ascii','ignore')
+                txt_norm = un.normalize('NFKD', txt).encode('ascii','ignore').__str__()
                 first.append(txt_norm)
                 
             for eobj in cobj.findAll(K_EOBJ_2, K_EOBJ_2_NAME):
                 txt = eobj.get_text().strip()
-                txt_norm = un.normalize('NFKD', txt).encode('ascii','ignore')
+                txt_norm = un.normalize('NFKD', txt).encode('ascii','ignore').__str__()
                 second.append(txt_norm)
             
         if len(first) == len(second):
@@ -101,24 +93,24 @@ class KScrap(object):
                 type_el = TYPE_1_COL
                 
                 try:               
-                    first_name = K_STR_CONVERT[first_it]
+                    first_name = K_STR_CONVERT[first_it[2:-1]]
                     try:               
-                        second_name = K_STR_CONVERT[second[i]]
+                        second_name = K_STR_CONVERT[second[i][2:-1]]
                         
                         k_data.append([str(i), type_el, first_name, second_name])
                     except KeyError:                
-                        print "ERROR converting k name: %s" % second[i]
+                        print("ERROR converting k name: %s" % second[i])
                         success = False
   
                 except KeyError:                
-                    print "ERROR converting k name: %s" % first_it
+                    print("ERROR converting k name: %s" % first_it)
                     success = False
                     
                 if not success:
                     k_data.append([str(i), type_el, K_UNKNOWN_NAME, K_UNKNOWN_NAME])
                     success = True
         else:
-            print "ERROR reading K, k_data not paired."       
+            print("ERROR reading K, k_data not paired.")    
             success = False 
             
         return k_data, temp_index, success
@@ -139,7 +131,7 @@ class KScrap(object):
                     raise ScrapingException("Error scraping k.")
                     
             except KeyError as ke:
-                print "ERROR retrieving k: %s" % ke
+                print("ERROR retrieving k: %s" % ke)
                 success = False
                 
         return k_data, index
@@ -226,13 +218,11 @@ class KScrap(object):
             
             KScrap._process_lm_page(bsObj, lm)
             
-            print "Read: %dx%d" % (len(lm), len(lm[0]))
+            print("Read: %dx%d" % (len(lm), len(lm[0])))
         except AttributeError as ae:
-            print "ERROR retrieving lm: %s" % ae
-        except urllib2.BadStatusLine as bsl:
-            print "ERROR BadStatusLine lm: %s" % bsl
+            print("ERROR retrieving lm: %s" % ae)
         except requests.ConnectionError as ce:
-            print "ERROR ConnectionError lm: %s" % ce
+            print("ERROR ConnectionError lm: %s" % ce)
         
     # ------------------------------------- VE scraping.  
     @staticmethod      
@@ -257,13 +247,11 @@ class KScrap(object):
             
             KScrap._process_ve_page(bsObj, ve)
         
-            print "Read: %dx%d" % (len(ve), len(ve[0]))
+            print("Read: %dx%d" % (len(ve), len(ve[0])))
         except AttributeError as ae:
-            print "ERROR retrieving ve: %s" % ae
-        except urllib2.BadStatusLine as bsl:
-            print "ERROR BadStatusLine ve: %s" % bsl
+            print("ERROR retrieving ve: %s" % ae)
         except requests.ConnectionError as ce:
-            print "ERROR ConnectionError ve: %s" % ce 
+            print("ERROR ConnectionError ve: %s" % ce)
 
     # ------------------------------------- QU scraping.
     @staticmethod
@@ -298,13 +286,11 @@ class KScrap(object):
                 
                 KScrap._process_qu_page(bsObj, qu)
             
-                print "Read: %dx%d" % (len(qu), len(qu[0]))
+                print("Read: %dx%d" % (len(qu), len(qu[0])))
             except AttributeError as ae:
-                print "ERROR retrieving qu: %s" % ae
-            except urllib2.BadStatusLine as bsl:
-                print "ERROR BadStatusLine qu: %s" % bsl
+                print("ERROR retrieving qu: %s" % ae)
             except requests.ConnectionError as ce:
-                print "ERROR ConnectionError qu: %s" % ce
+                print("ERROR ConnectionError qu: %s" % ce)
             
     # ------------------------------------- Q1 scraping.
     @staticmethod
@@ -323,7 +309,7 @@ class KScrap(object):
                 q1[i][2] = int(el[THIRD_FIELD])   
                 
         except UnicodeEncodeError as uee:
-            print uee                   
+            print(uee)  
     
     @staticmethod
     def q1_scraping(q1, index):
@@ -335,19 +321,20 @@ class KScrap(object):
                 
                 KScrap._process_q1_page(bsObj, q1)    
             
-                print "Read: %dx%d" % (len(q1), len(q1[0])) 
+                print("Read: %dx%d" % (len(q1), len(q1[0])))
             except AttributeError as ae:
-                print "ERROR retrieving q1: %s" % ae     
+                print("ERROR retrieving q1: %s" % ae)     
             except requests.ConnectionError as ce:
-                print "ERROR ConnectionError q1: %s" % ce    
+                print("ERROR ConnectionError q1: %s" % ce)    
             except Exception as e:
-                print "ERROR Exception q1: %s" % e 
+                print("ERROR Exception q1: %s" % e) 
          
     # ------------------------------------- CQ scraping.
     @staticmethod
     def _process_cq_page(bsObj, cq, cqp):
         
         current_data = cq
+        table = str.maketrans(dict.fromkeys("b'"))
         
         i = 0
         for ob in bsObj.findAll(CQ_OB, CQ_DICT):        
@@ -357,7 +344,7 @@ class KScrap(object):
                     txt = eobj.get_text().strip() 
                     if i < NUM_ROWS - 1:
                         if len(txt):
-                            txt_nor = un.normalize('NFKD', txt).encode('ascii','ignore')
+                            txt_nor = un.normalize('NFKD', txt).encode('ascii','ignore').__str__().translate(table)
                             
                             pos = txt_nor.find(CQ_SEP)
                             if pos > 0:
@@ -384,13 +371,11 @@ class KScrap(object):
                 
                 KScrap._process_cq_page(bsObj, cq, cqp)     
             
-                print "Read: %dx%d" % (len(cq), len(cqp))
+                print("Read: %dx%d" % (len(cq), len(cqp)))
             except AttributeError as ae:
-                print "ERROR retrieving cq: %s" % ae  
-            except urllib2.BadStatusLine as bsl:
-                print "ERROR BadStatusLine cq: %s" % bsl
+                print("ERROR retrieving cq: %s" % ae)  
             except requests.ConnectionError as ce:
-                print "ERROR ConnectionError cq: %s" % ce
+                print("ERROR ConnectionError cq: %s" % ce)
     
     # ------------------------------------- Cl scraping.
     @staticmethod
@@ -422,7 +407,7 @@ class KScrap(object):
                 cl_data[i][CL_POS_COL] = i + 1
                 cl_data[i][CL_NAME_COL] = CL_STR_CONVERT[temp_lst[i]]
             except KeyError as ke:
-                print "ERROR: %s" % ke                  
+                print("ERROR: %s" % ke)                  
            
         for i, elt in enumerate(CL_ELEMENTS):            
             KScrap._fill_cl_data(cl_data, i + CL_INDEX_P_LO, size, bsObj, elt) 
@@ -436,7 +421,7 @@ class KScrap(object):
         
         cl_data = KScrap._process_cl_page(bsObj, size)
         
-        print "Read: %dx%d for Cl" % (len(cl_data), len(cl_data[0]))
+        print("Read: %dx%d for Cl" % (len(cl_data), len(cl_data[0])))
         
         return cl_data                      
 

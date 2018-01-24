@@ -33,7 +33,7 @@ def get_second_index(index_maxi, index_mini):
 def calc_ap_base(data):
     """Get the ap for each row. """
     
-    print "Calculating ap ..."
+    print("Calculating ap ...")
     
     base = []
     
