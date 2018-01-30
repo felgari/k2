@@ -95,7 +95,7 @@ class ClDat(object):
                         
                         if len(l_txt):    
                                           
-                            if l_txt.find(B1_TEXT) >= 0:
+                            if l_txt.find(B1_TYPE) >= 0:
                                 
                                 l_text = extract_list_text(l_txt, NUM_COLS_CL)
                                 
@@ -106,7 +106,7 @@ class ClDat(object):
                                     print("Read %dx%d from file for B1" %
                                           (len(self._b1), len(self._b1[0])))
                                 
-                            elif l_txt.find(A2_TEXT) >= 0:
+                            elif l_txt.find(A2_TYPE) >= 0:
                                 
                                 l_text = extract_list_text(l_txt, NUM_COLS_CL)
                                 
@@ -134,8 +134,8 @@ class ClDat(object):
             
             with open(full_path_name, 'w') as f:
             
-                f.write("%s %s %s\n\n" % (B1_TEXT, SCR_TXT_DELIM, str(self._b1)))
-                f.write("%s %s %s\n" % (A2_TEXT, SCR_TXT_DELIM, str(self._a2))) 
+                f.write("%s %s %s\n\n" % (B1_TYPE, SCR_TXT_DELIM, str(self._b1)))
+                f.write("%s %s %s\n" % (A2_TYPE, SCR_TXT_DELIM, str(self._a2))) 
             
             print("Data scrapped saved in: %s" % full_path_name)
             
@@ -160,7 +160,7 @@ class ClDat(object):
     
     def cl_data(self, name, type):
         
-        if type == B1_TEXT:
+        if type == B1_TYPE:
             return self.b1_data(name)
         else:
             return self.a2_data(name)

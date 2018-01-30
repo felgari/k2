@@ -20,7 +20,6 @@
 
 import sys
 import os
-from subprocess import call
 import numpy as np
 from sklearn.ensemble import RandomForestClassifier
 from sklearn import metrics
@@ -122,8 +121,6 @@ def predict_nn(hist_data, cl_data, data_to_predict):
     return link_perc_to_cl(prd, CLASSES_PRE), score
     
 def predict_tf(hist_data, cl_data, data_to_predict):
-    
-    call(["rm", MODEL_DIR + "/*"])
 
     # Classifier.
     feature_columns = [tf.feature_column.numeric_column("x",
@@ -219,12 +216,14 @@ def gen_hist(k, cl, b1_res, a2_res):
         k_name_2 = k_elt[K_NAME_2_COL]
         
         if k_name_1 != K_UNKNOWN_NAME and k_name_1 != K_UNKNOWN_NAME:
-            data = b1_res
-            elt_type = TYPE_1_COL
-            cl_1 = cl.b1_data(k_name_1)
-            cl_2 = cl.b1_data(k_name_2)
+
+            if NAME_GROUP[k_name_1] == GROUP_B1:
+                elt_type = TYPE_1_COL
+                data = b1_res
+                cl_1 = cl.b1_data(k_name_1)
+                cl_2 = cl.b1_data(k_name_2)
             
-            if len(cl_1) == 0:
+            else:
                 data = a2_res
                 elt_type = TYPE_2_COL
                 cl_1 = cl.a2_data(k_name_1)
@@ -246,12 +245,11 @@ def gen_hist(k, cl, b1_res, a2_res):
             mat1, val_res1 = get_matchings(k_name_1, data, True)
             mat2, val_res2 = get_matchings(k_name_2, data, False)
             
-            for m in mat1:
-                name = m[MAT_NAME_2_COL]
+            for m in mat1:               
                 if elt_type == TYPE_1_COL:
-                    cl_data = cl.b1_data(name)
+                    cl_data = cl.b1_data(k_name_1)
                 else:
-                    cl_data = cl.a2_data(name)
+                    cl_data = cl.a2_data(k_name_1)
                     
                 h = [cl_data[CL_POS] - pos_lo]
                 h.extend(cl_lo)
@@ -260,11 +258,10 @@ def gen_hist(k, cl, b1_res, a2_res):
                 hist_data.append(h)
             
             for m in mat2:
-                name = m[MAT_NAME_1_COL]
                 if elt_type == TYPE_1_COL:
-                    cl_data = cl.b1_data(name)
+                    cl_data = cl.b1_data(k_name_2)
                 else:
-                    cl_data = cl.a2_data(name)
+                    cl_data = cl.a2_data(k_name_2)
                     
                 h = [pos_vi - cl_data[CL_POS]]
                 h.extend([cl_data[i] for i in LO_D_RANGE])
@@ -290,7 +287,7 @@ def predict_k(k, cl, b1_res, a2_res):
         
         for i in range(len(data_for_predict)):
             
-            print("Predicting: %s vs %s" % (k[i][K_NAME_1_COL], 
+            print("Predicting: %s - %s" % (k[i][K_NAME_1_COL], 
                                             k[i][K_NAME_2_COL]))
             
             if len(data_for_predict[i]) > 0 and len(data_to_predict[i]) > 0:
@@ -308,9 +305,6 @@ def predict_k(k, cl, b1_res, a2_res):
     else:
         print("ERROR: Length of data for prediction don't match: %d %d" %
             (len(data_for_predict), len(data_to_predict)))
-            
-    print(pre_rf)
-    print(pre_df)
     
     return pre_rf, sco_rf, pre_df, sco_df
             

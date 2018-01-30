@@ -428,7 +428,7 @@ class ResData(object):
                 
                 try:
                     # Try to convert the line read.
-                    lines_pro.append(SCO_STR_CONVERT[line_wo_nl])
+                    lines_pro.append(NAMES_CONVERT[line_wo_nl])
                 except KeyError:
                     # If exception, no conversion is needed, just add the line.
                     lines_pro.append(line_wo_nl)  
@@ -451,7 +451,7 @@ class ResData(object):
                 
                 try:
                     # Try to convert the line read.
-                    lines_pro.append(SCO_STR_CONVERT[line_wo_nl])
+                    lines_pro.append(NAMES_CONVERT[line_wo_nl])
                 except KeyError:
                     # If exception, no conversion is needed, just add the line.
                     lines_pro.append(line_wo_nl)  
@@ -587,6 +587,72 @@ def load_res():
     res.load_res(SIMUL_DATA_PATH)
     
     return res
+
+def add_dif(a_dict, dif):
+    
+    try:
+        n = a_dict[dif]
+        
+        a_dict[dif] = n + 1
+    
+    except KeyError:
+        
+        a_dict[dif] = 1
+        
+def val_from_dict(a_dict, key):
+    
+    try:
+        return a_dict[key]
+    
+    except KeyError:
+        
+        return 0
+
+def calc_res_per(res, cl, type):
+    
+    dict_first = {}
+    dict_second = {}
+    dict_third = {}
+    the_dict = {}
+    
+    min_dif = 0
+    max_dif = 0
+    
+    for r in res:
+        name_lo = NAMES_CONVERT[r[RES_NAME_LO]]
+        name_vi = NAMES_CONVERT[r[RES_NAME_VI]]
+        sco = r[RES_SCO]
+
+        pos_lo = cl.cl_data(name_lo, type)[CL_POS]
+        pos_vi = cl.cl_data(name_vi, type)[CL_POS]
+        
+        dif = pos_lo - pos_vi
+        
+        if dif < min_dif:
+            min_dif = dif
+            
+        if dif > max_dif:
+            max_dif = dif
+
+        if sco in FIRST_SET:
+            add_dif(dict_first, dif)
+        elif sco in SECOND_SET:
+            add_dif(dict_second, dif)
+        else:
+            add_dif(dict_third, dif)
+            
+    for x in list(range(min_dif, max_dif+1)):
+        
+        v1 = val_from_dict(dict_first, x)
+        v2 = val_from_dict(dict_second, x)
+        v3 = val_from_dict(dict_third, x)
+        
+        s = v1 + v2 + v3
+        
+        if s > 0:
+            the_dict[x] = [v1, v2, v3]
+
+    return the_dict
 
 if __name__ == "__main__":  
     

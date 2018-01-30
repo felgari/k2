@@ -56,8 +56,8 @@ class ResDiffPos(object):
         res = read_res_file(res_file_name)
         
         for r in res:
-            name1 = r[R_NAME_1_COL]
-            name2 = r[R_NAME_2_COL]
+            name1 = NAMES_CONVERT[r[R_NAME_1_COL]]
+            name2 = NAMES_CONVERT[r[R_NAME_2_COL]]
             m = r[R_M_COL]
             
             dif = cl_dict[name1] - cl_dict[name2]

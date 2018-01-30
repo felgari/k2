@@ -93,9 +93,9 @@ class KScrap(object):
                 type_el = TYPE_1_COL
                 
                 try:               
-                    first_name = K_STR_CONVERT[first_it[2:-1]]
+                    first_name = NAMES_CONVERT[first_it[2:-1]]
                     try:               
-                        second_name = K_STR_CONVERT[second[i][2:-1]]
+                        second_name = NAMES_CONVERT[second[i][2:-1]]
                         
                         k_data.append([str(i), type_el, first_name, second_name])
                     except KeyError:                
@@ -405,7 +405,7 @@ class KScrap(object):
         for i in range(size):
             try:
                 cl_data[i][CL_POS_COL] = i + 1
-                cl_data[i][CL_NAME_COL] = CL_STR_CONVERT[temp_lst[i]]
+                cl_data[i][CL_NAME_COL] = NAMES_CONVERT[temp_lst[i]]
             except KeyError as ke:
                 print("ERROR: %s" % ke)                  
            
