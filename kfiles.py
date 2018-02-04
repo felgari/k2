@@ -158,7 +158,7 @@ def save_all(k, extm, p, p_rf, ap_rf, p_nn, ap_nn, index):
     except IOError as ioe:
          print("Error saving file: '%s'" % full_path_name)
          
-def save_all_data(k, extd, ap, rep_ap, res_1, res_2, q, pre_1, pre_2):
+def save_all_data(k, extd, ap, rep_ap, trend_1, trend_2, q, pre_1, pre_2):
 
     out_file_name = OUTPUT_FILE_PREFIX + k.index + OUTPUT_FILE_NAME_EXT
     
@@ -185,7 +185,7 @@ def save_all_data(k, extd, ap, rep_ap, res_1, res_2, q, pre_1, pre_2):
 #                        extd.cq[i][0], extd.cq[i][1], extd.cq[i][2], \
                         extd.cqp[i][0], extd.cqp[i][1], extd.cqp[i][2], \
                         extd.mean[i][0], extd.mean[i][1], extd.mean[i][2], \
-                        ap[i], res_1[i], res_2[i], \
+                        ap[i], trend_1[i], trend_2[i], \
                         pre_1[i], pre_2[i], \
                         [int(pre_1[i][j] * WEIGTHS_PRE[W_PRE_1] +
                                pre_2[i][j] * WEIGTHS_PRE[W_PRE_2]) \

@@ -84,13 +84,13 @@ def main(progargs):
         
         pre_1, sco_1, pre_2, sco_2 = predict_k(k.k, cl, b1_res, a2_res)
           
-        rep_ap, res_1, res_2 = do_report(k.index, k.k, cl, 
+        rep_ap, trend_1, trend_2 = do_report(k.index, k.k, cl, 
                                          b1_res, a2_res, b1_per, a2_per, 
                                          extd, pre_1, sco_1, pre_2, sco_2)
         
-        q = calc_q(rep_ap, res_1, res_2)
+        q = calc_q(rep_ap, trend_1, trend_2)
         
-        save_all_data(k, extd, ap, rep_ap, res_1, res_2, q, pre_1, pre_2)
+        save_all_data(k, extd, ap, rep_ap, trend_1, trend_2, q, pre_1, pre_2)
         
     else:
         print("Source data couldn't be loaded, no calculations were made.")

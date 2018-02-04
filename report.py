@@ -41,9 +41,9 @@ def do_report(index, k_data, cl, b1_res, a2_res, b1_per, a2_per, extd,
     
     rep_ap = []
     
-    res_1 = []
+    trend_1 = []
     
-    res_2 = []
+    trend_2 = []
     
     out_file_name = os.path.join(DATA_PATH, report_file_name(index))
     
@@ -84,11 +84,11 @@ def do_report(index, k_data, cl, b1_res, a2_res, b1_per, a2_per, extd,
                         cl_2 = cl.a2_data(k_name_2)
                         per = a2_per
 
-                    mat1, val_res1 = get_matchings(k_name_1, data, True)
-                    mat2, val_res2 = get_matchings(k_name_2, data, False)
+                    mat1, val_trend1 = get_matchings(k_name_1, data, True)
+                    mat2, val_trend2 = get_matchings(k_name_2, data, False)
 
-                    res_1.append(val_res1)
-                    res_2.append(val_res2)
+                    trend_1.append(val_trend1)
+                    trend_2.append(val_trend2)
 
                     f.write("%s\n" % GEN_SEP)
                     
@@ -135,7 +135,7 @@ def do_report(index, k_data, cl, b1_res, a2_res, b1_per, a2_per, extd,
                         rep_ap.append(ap_t)
                         
                         f.write("Ap trend: %s -> %s %s\n" % \
-                                (ap_t, val_res1, val_res2))
+                                (ap_t, val_trend1, val_trend2))
                     else:
                         rep_ap.append(TREND_IG)
   
@@ -170,8 +170,8 @@ def do_report(index, k_data, cl, b1_res, a2_res, b1_per, a2_per, extd,
                         f.write("%s (%s)\n" % (m, mat_cl[CL_POS_COL]))
 
                 else:
-                    res_1.append(TREND_IG)
-                    res_2.append(TREND_IG)
+                    trend_1.append(TREND_IG)
+                    trend_2.append(TREND_IG)
                     rep_ap.append(TREND_IG)
                     
                 idx += 1
@@ -185,7 +185,7 @@ def do_report(index, k_data, cl, b1_res, a2_res, b1_per, a2_per, extd,
     except IndexError as ie:
         print("IndexError saving file: '%s'" % out_file_name)
     
-    return rep_ap, res_1, res_2
+    return rep_ap, trend_1, trend_2
     
 def report_generated(index):
     
