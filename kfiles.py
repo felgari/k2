@@ -145,7 +145,11 @@ def save_all(k, extm, p, p_rf, ap_rf, p_nn, ap_nn, index):
             for i, k_elt in enumerate(k):    
                 
                 row = [k_elt[K_NAME_1_COL], k_elt[K_NAME_2_COL]] + extm[i] + \
-                    p[i] + p_rf[i] + [ap_rf[i]] + p_nn[i] + [ap_nn[i]]
+                    p[i] + p_rf[i] + p_nn[i] + \
+                    [ int(p_rf[i][j] * WEIGTHS_PRE[W_PRE_1] + \
+                          p_nn[i][j] * WEIGTHS_PRE[W_PRE_2]) \
+                          for j in range(len(CHR_TO_RES)) ] + \
+                    [ap_nn[i]]
                        
                 f.write("%s\n" % CSV_DELIMITER.join(str(e) for e in row))
         
@@ -181,8 +185,12 @@ def save_all_data(k, extd, ap, rep_ap, res_1, res_2, q, pre_1, pre_2):
 #                        extd.cq[i][0], extd.cq[i][1], extd.cq[i][2], \
                         extd.cqp[i][0], extd.cqp[i][1], extd.cqp[i][2], \
                         extd.mean[i][0], extd.mean[i][1], extd.mean[i][2], \
-                        ap[i], rep_ap[i], res_1[i], res_2[i], \
-                        pre_1[i], pre_2[i], q[i] ]
+                        ap[i], res_1[i], res_2[i], \
+                        pre_1[i], pre_2[i], \
+                        [int(pre_1[i][j] * WEIGTHS_PRE[W_PRE_1] +
+                               pre_2[i][j] * WEIGTHS_PRE[W_PRE_2]) \
+                               for j in range(len(CHR_TO_RES))],\
+                        q[i] ]
                            
                     f.write("%s%s%s%s%s\n" % ( k.k[i][NAME_LO_COL], CSV_DELIMITER_TAB,
                                        k.k[i][NAME_VI_COL], CSV_DELIMITER_TAB,
