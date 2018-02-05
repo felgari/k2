@@ -20,6 +20,7 @@
 """ 
 
 from ctes import *
+import numpy as np
 
 def get_second_index(index_maxi, index_mini):
         
@@ -95,3 +96,56 @@ def calc_q(rep_ap, res_1, res_2):
             q.append(rep_ap[i])
     
     return q
+
+def calc_ap(avg):
+    
+    ap = []
+    var = []
+    
+    for a in avg:
+        
+        if a[IDX_FIRST_VAL] >= AP_FIRST_ENO_VAL:
+            val = FIRST_VAL
+            
+        elif a[IDX_FIRST_VAL] >= AP_FIRST_MIN_VAL:    
+            if a[IDX_THIRD_VAL] < AP_THIRD_IGN_VAL:
+                val = FIRST_VAL + SECOND_VAL
+            else:
+                val = AP_ALL_VAL
+                
+        elif a[IDX_THIRD_VAL] >= AP_THIRD_MIN_VAL:
+            val = THIRD_VAL
+        else:
+            if a[IDX_FIRST_VAL] < AP_FIRST_IGN_VAL:
+                val = SECOND_VAL + THIRD_VAL
+            else:
+                val = AP_ALL_VAL  
+            
+        ap.append(val)
+        
+        if val == AP_ALL_VAL:
+            var.append('{:.2f}'.format(np.var(a)))
+        else:
+            var.append(VAR_ZERO)
+    
+    return ap, var
+
+def calc_q_from_pre(pre_1, pre_2):
+    
+    pre_avg = []
+    red = []
+    
+    for p1, p2 in zip(pre_1, pre_2):
+        av = [int(x * WEIGTHS_PRE[W_PRE_1] + y * WEIGTHS_PRE[W_PRE_2]) \
+              for x, y in zip(p1, p2)]
+        pre_avg.append(av)
+        
+        red.append([int(av[0] + av[1]/2), \
+                    int(av[1]/2 + av[2] + av[3]/2), \
+                    int(av[3]/2 + av[4])])
+        
+    
+    ap, var = calc_ap(red)
+    
+    return ap, var, pre_avg, red
+    

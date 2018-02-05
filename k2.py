@@ -29,7 +29,7 @@ from clda import ClDat
 from resd import retrieve_res, calculate_res, calc_res_per
 from extd import ExtD
 from pred import predict_k
-from ap import calc_ap_base, calc_q
+from ap import calc_ap_base, calc_q_from_pre
 from kfiles import save_all_data, read_res_file
 from report import do_report
 
@@ -88,9 +88,10 @@ def main(progargs):
                                          b1_res, a2_res, b1_per, a2_per, 
                                          extd, pre_1, sco_1, pre_2, sco_2)
         
-        q = calc_q(rep_ap, trend_1, trend_2)
+        q, var, pre_avg, avg_red = calc_q_from_pre(pre_1, pre_2)
         
-        save_all_data(k, extd, ap, rep_ap, trend_1, trend_2, q, pre_1, pre_2)
+        save_all_data(k, extd, ap, rep_ap, trend_1, trend_2, q, 
+                      pre_1, pre_2, pre_avg, avg_red, var)
         
     else:
         print("Source data couldn't be loaded, no calculations were made.")
