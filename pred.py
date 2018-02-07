@@ -164,8 +164,20 @@ def predict_rf(hist_data, cl_data, data_to_predict):
     #score = metrics.accuracy_score(np_classes_data, rf.predict(np_hist_data))
     
     prd = rf.predict_proba(np_prd_data)
+    
+    # Some classes may lack.
+    the_classes = set(np_classes_data)
+    the_pred = []
+    fault = 0
+    
+    for i in range(len(MAT_CONV)):
+        if i in the_classes:
+            the_pred.append(prd[0][i-fault])
+        else:
+            the_pred.append(0.0)
+            fault += 1
 
-    return [int(p*100) for p in prd[0]], 0.0
+    return [int(p*100) for p in the_pred], 0.0
 
 def extract_pred_data(pred_data):
     
@@ -187,6 +199,9 @@ def predict(pred_data, data_to_predict):
         
         data_out_rf, score_rf = predict_rf(hist_data, cl_data, data_to_predict)
         data_out_nn, score_nn = predict_tf(hist_data, cl_data, data_to_predict)
+        
+    print(data_out_rf)
+    print(data_out_nn)
         
     return data_out_rf, score_rf, data_out_nn, score_nn
 
