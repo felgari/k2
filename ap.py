@@ -123,7 +123,7 @@ def calc_ap(avg):
             
         ap.append(val)
         
-        if val == AP_ALL_VAL:
+        if len(val) > 1:
             var.append('{:.2f}'.format(np.var(a)))
         else:
             var.append(VAR_ZERO)
