@@ -88,10 +88,12 @@ def main(progargs):
                                          b1_res, a2_res, b1_per, a2_per, 
                                          extd, pre_1, sco_1, pre_2, sco_2)
         
-        q, var, pre_avg, avg_red = calc_q_from_pre(pre_1, pre_2)
+        q, var, pre_avg, avg_red, l_min, l_max, l_min_pos, l_max_pos = \
+            calc_q_from_pre(pre_1, pre_2)
         
         save_all_data(k, extd, ap, rep_ap, trend_1, trend_2, q, 
-                      pre_1, pre_2, pre_avg, avg_red, var)
+                      pre_1, pre_2, pre_avg, avg_red, var, 
+                      l_min, l_max, l_min_pos, l_max_pos)
         
     else:
         print("Source data couldn't be loaded, no calculations were made.")

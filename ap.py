@@ -134,6 +134,10 @@ def calc_q_from_pre(pre_1, pre_2):
     
     pre_avg = []
     red = []
+    l_min = []
+    l_max = []
+    l_min_pos = []
+    l_max_pos = []
     
     for p1, p2 in zip(pre_1, pre_2):
         av = [int(x * WEIGTHS_PRE[W_PRE_1] + y * WEIGTHS_PRE[W_PRE_2]) \
@@ -143,9 +147,19 @@ def calc_q_from_pre(pre_1, pre_2):
         red.append([int(av[0] + av[1]/2), \
                     int(av[1]/2 + av[2] + av[3]/2), \
                     int(av[3]/2 + av[4])])
+    
+    for r in red:
+        l_min.append(min(r))
+        l_max.append(max(r))
         
+    l_min_sorted = sorted(l_min, reverse=True)
+    l_max_sorted = sorted(l_max, reverse=True)
+    
+    for r in red:
+        l_min_pos.append(l_min_sorted.index(min(r))+1)
+        l_max_pos.append(l_max_sorted.index(max(r))+1)
     
     ap, var = calc_ap(red)
     
-    return ap, var, pre_avg, red
+    return ap, var, pre_avg, red, l_min, l_max, l_min_pos, l_max_pos
     
