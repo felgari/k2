@@ -194,33 +194,21 @@ class ExtD(object):
                     if len(l_txt):                  
                         if l_txt.find(LM_TEXT) >= 0:
                             self._lm = extract_list_text(l_txt, NUM_COLS_LM)
-                            print("Read %dx%d from file for LM" %
-                                  (len(self._lm), len(self._lm[0])))
                                 
                         elif l_txt.find(VE_TEXT) >= 0:
                             self._ve = extract_list_text(l_txt, NUM_COLS_VE)
-                            print("Read %dx%d from file for VE" %
-                                  (len(self._ve), len(self._ve[0])))
                                 
                         elif l_txt.find(QU_TEXT) >= 0:
                             self._qu = extract_list_text(l_txt, NUM_COLS_QU)
-                            print("Read %dx%d from file for QU" %
-                                  (len(self._qu), len(self._qu[0])))
                                 
                         elif l_txt.find(Q1_TEXT) >= 0:
                             self._q1 = extract_list_text(l_txt, NUM_COLS_Q1)
-                            print("Read %dx%d from file for Q1" %
-                                  (len(self._q1), len(self._q1[0])))
                                 
                         elif l_txt.find(CQ_TEXT) >= 0:
                             self._cq = extract_list_text(l_txt, NUM_COLS_CQ)
-                            print("Read %dx%d from file for CQ" %
-                                  (len(self._cq), len(self._cq[0])))
                                 
                         elif l_txt.find(CQP_TEXT) >= 0:
                             self._cqp = extract_list_text(l_txt, NUM_COLS_CQ)
-                            print("Read %dx%d from file for CQP" %
-                                  (len(self._cqp), len(self._cqp[0])))
                                 
         except IOError as ioe:
             print("ERROR: Reading file '%s'" % full_path_name)  

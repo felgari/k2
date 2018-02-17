@@ -102,20 +102,12 @@ class ClDat(object):
                                 for l in l_text:
                                     self._b1.append([l[i] for i in CL_ORDER])
                                 
-                                if self._index != NO_READ_INDEX:
-                                    print("Read %dx%d from file for B1" %
-                                          (len(self._b1), len(self._b1[0])))
-                                
                             elif l_txt.find(A2_TYPE) >= 0:
                                 
                                 l_text = extract_list_text(l_txt, NUM_COLS_CL)
                                 
                                 for l in l_text:
                                     self._a2.append([l[i] for i in CL_ORDER])
-                                    
-                                if self._index != NO_READ_INDEX:
-                                    print("Read %dx%d from file for A2" %
-                                          (len(self._a2), len(self._a2[0])))
                                     
             except IOError as ioe:
                 print("ERROR: Reading file '%s'" % full_path_name ) 
