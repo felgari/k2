@@ -29,7 +29,7 @@ from clda import ClDat
 from resd import retrieve_res, calculate_res, calc_res_per
 from extd import ExtD
 from pred import predict_k
-from ap import calc_ap_base, calc_q_from_pre
+from ap import calc_q_from_pre
 from kfiles import save_all_data, read_res_file
 from report import do_report
 
@@ -71,9 +71,7 @@ def main(progargs):
         
     success, k, cl, extd = retrieve_data(progargs.index)
     
-    if success:
-        ap = calc_ap_base(extd.mean)
-        
+    if success:       
         b1_res = read_res_file(B1_RES_FILE)    
     
         a2_res = read_res_file(A2_RES_FILE)
@@ -88,12 +86,11 @@ def main(progargs):
                                          b1_res, a2_res, b1_per, a2_per, 
                                          extd, pre_1, sco_1, pre_2, sco_2)
         
-        q, var, pre_avg, avg_red, l_min, l_max, l_min_pos, l_max_pos = \
+        ap, var, var2, pre_avg, avg_red, ord, alt_ap = \
             calc_q_from_pre(pre_1, pre_2)
         
-        save_all_data(k, extd, ap, rep_ap, trend_1, trend_2, q, 
-                      pre_1, pre_2, pre_avg, avg_red, var, 
-                      l_min, l_max, l_min_pos, l_max_pos)
+        save_all_data(k, extd, ap, pre_1, pre_2, pre_avg, avg_red, 
+                      var, var2, ord, alt_ap)
         
     else:
         print("Source data couldn't be loaded, no calculations were made.")

@@ -154,8 +154,8 @@ def save_all(k, extm, p, p_rf, ap_rf, p_nn, ap_nn, pre_avg, index):
     except IOError as ioe:
          print("Error saving file: '%s'" % full_path_name)
          
-def save_all_data(k, extd, ap, rep_ap, trend_1, trend_2, q, pre_1, pre_2, 
-                  pre_avg, avg_red, var, l_min, l_max, l_min_pos, l_max_pos):
+def save_all_data(k, extd, ap, pre_1, pre_2, pre_avg, avg_red, 
+                  var, var2, ord, alt_ap):
 
     out_file_name = OUTPUT_FILE_PREFIX + k.index + OUTPUT_FILE_NAME_EXT
     
@@ -182,9 +182,8 @@ def save_all_data(k, extd, ap, rep_ap, trend_1, trend_2, q, pre_1, pre_2,
 #                        extd.cq[i][0], extd.cq[i][1], extd.cq[i][2], \
                         extd.cqp[i][0], extd.cqp[i][1], extd.cqp[i][2], \
                         extd.mean[i][0], extd.mean[i][1], extd.mean[i][2], \
-                        trend_1[i], trend_2[i], \
-                        pre_1[i], pre_2[i], pre_avg[i], avg_red[i], q[i], var[i],
-                        l_min[i], l_min_pos[i], l_max[i], l_max_pos[i], ap[i]]
+                        pre_1[i], pre_2[i], pre_avg[i], avg_red[i], 
+                        var[i], var2[i], ap[i], ord[i], alt_ap[i]]
                            
                     f.write("%s%s%s%s%s\n" % ( k.k[i][NAME_LO_COL], CSV_DELIMITER_TAB,
                                        k.k[i][NAME_VI_COL], CSV_DELIMITER_TAB,

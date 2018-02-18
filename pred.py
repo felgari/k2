@@ -103,22 +103,6 @@ def eval_predict_rf(prd_data, prd_cl_data, eval_data, eval_cl_data):
     rf.fit(np_prd_data, np_prd_cl_data)
     
     return metrics.accuracy_score(np_eval_cl_data, rf.predict(np_eval_data))
-
-def predict_nn(hist_data, cl_data, data_to_predict):
-    
-    np_hist_data, np_prd_data, np_classes_data = \
-        prepare_data_for_nn(hist_data, data_to_predict, cl_data)
-    
-    nn = skflow.Estimator(model_fn=nn_model, n_classes=len(CLASSES_PRE))
-    
-    nn.fit(np_hist_data, np_classes_data, logdir = LOG_DIR)
-    
-    score = metrics.accuracy_score(np_classes_data, nn.predict(np_hist_data))
-    print("Accuracy NN: %f" % score)
-      
-    prd = nn.predict_proba(np_prd_data) 
-    
-    return link_perc_to_cl(prd, CLASSES_PRE), score
     
 def predict_tf(hist_data, cl_data, data_to_predict):
 
@@ -198,10 +182,8 @@ def predict(pred_data, data_to_predict):
     if len(hist_data) and len(data_to_predict):
         
         data_out_rf, score_rf = predict_rf(hist_data, cl_data, data_to_predict)
+        #data_out_nn, score_nn = data_out_rf, score_rf
         data_out_nn, score_nn = predict_tf(hist_data, cl_data, data_to_predict)
-        
-    print(data_out_rf)
-    print(data_out_nn)
         
     return data_out_rf, score_rf, data_out_nn, score_nn
 
