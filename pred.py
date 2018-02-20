@@ -20,6 +20,7 @@
 
 import sys
 import os
+import csv
 import numpy as np
 from sklearn.ensemble import RandomForestClassifier
 from sklearn import metrics
@@ -28,6 +29,53 @@ import tensorflow.contrib.learn as skflow
 
 from ctes import *
 from utils import get_matchings
+
+def _read_pre(index, file_name_prefix):
+    
+    lines = []   
+    pre_data = [] 
+    
+    file_name = file_name_prefix + str(index) + PRED_OUT_FILE_EXT 
+    
+    full_path_name = os.path.join(DATA_PATH, file_name) 
+    
+    try:
+        with open(full_path_name, 'rt') as f:
+            
+            reader = csv.reader(f)
+        
+            for row in reader:
+                pre_data.append([int(r) for r in row])
+                
+            if len(pre_data) > 0:
+                print("Read pred from file: %s" % full_path_name)
+            else:
+                pre_data = [] 
+                print("No data read for pred from file: %s" % full_path_name)
+                            
+    except IOError as ioe:
+        print("No data read for pred from file: %s" % full_path_name)  
+        pre_data = []
+        
+    return pre_data
+
+def _save_pre(index, file_name_prefix, pre_data):
+    
+    file_name = file_name_prefix + str(index) + PRED_OUT_FILE_EXT 
+    
+    full_path_name = os.path.join(DATA_PATH, file_name) 
+    
+    try:
+
+        with open(full_path_name, 'w') as f:        
+            for pd in pre_data:            
+                f.write(CSV_DELIMITER.join( "%d" % int(p) for p in pd))
+                f.write("\n")
+        
+        print("File saved: %s" % full_path_name)
+           
+    except IOError as ioe:
+         print("Error saving file: '%s'" % full_path_name)
 
 def _get_val_index(values, order, sort_values, name):
     
@@ -271,38 +319,47 @@ def gen_hist(k, cl, b1_res, a2_res):
     
     return data_for_predict, data_to_predict
 
-def predict_k(k, cl, b1_res, a2_res):
+def predict_k(kd, cl, b1_res, a2_res):
     
     pre_rf = []
     sco_rf = []
     pre_df = []
     sco_df = []
     
-    data_for_predict, data_to_predict = gen_hist(k, cl, b1_res, a2_res)
-            
-    if len(data_for_predict) == len(data_to_predict):
-        
-        for i in range(len(data_for_predict)):
-            
-            print("Predicting: %s - %s" % (k[i][K_NAME_1_COL], 
-                                            k[i][K_NAME_2_COL]))
-            
-            if len(data_for_predict[i]) > 0 and len(data_to_predict[i]) > 0:
-                p1, s1, p2, s2 = predict(data_for_predict[i], data_to_predict[i])
-            else:
-                p1 = [TREND_IG]
-                s1 = 0.0
-                p2 = [TREND_IG]
-                s2 = 0.0
-            
-            pre_rf.append(p1)
-            sco_rf.append(s1)
-            pre_df.append(p2)
-            sco_df.append(s2)
+    pre_rf = _read_pre(kd.index, PREF_RF_PREFIX) 
+    pre_df = _read_pre(kd.index, PREF_DF_PREFIX)
+    
+    if len(pre_rf) > 0 and len(pre_df) > 0:       
+        sco_rf = 0.0
+        sco_df = 0.0
+    
     else:
-        print("ERROR: Length of data for prediction don't match: %d %d" %
-            (len(data_for_predict), len(data_to_predict)))
+        data_for_predict, data_to_predict = gen_hist(kd.k, cl, b1_res, a2_res)
+                
+        if len(data_for_predict) == len(data_to_predict):
+            
+            for i in range(len(data_for_predict)):
+                
+                print("Predicting: %s - %s" % (kd.k[i][K_NAME_1_COL], 
+                                                kd.k[i][K_NAME_2_COL]))
+                
+                if len(data_for_predict[i]) > 0 and len(data_to_predict[i]) > 0:
+                    p1, s1, p2, s2 = predict(data_for_predict[i], data_to_predict[i])
+                else:
+                    p1 = [TREND_IG]
+                    s1 = 0.0
+                    p2 = [TREND_IG]
+                    s2 = 0.0
+                
+                pre_rf.append(p1)
+                sco_rf.append(s1)
+                pre_df.append(p2)
+                sco_df.append(s2)
+                
+            _save_pre(kd.index, PREF_RF_PREFIX, pre_rf)
+            _save_pre(kd.index, PREF_DF_PREFIX, pre_df)
+        else:
+            print("ERROR: Length of data for prediction don't match: %d %d" %
+                (len(data_for_predict), len(data_to_predict)))
     
     return pre_rf, sco_rf, pre_df, sco_df
-            
-            
