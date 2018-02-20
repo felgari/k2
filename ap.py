@@ -37,10 +37,10 @@ def calc_ap_from_avg_pred(red):
     for r, mi, ma in zip(red, l_min, l_max):
 
         v = np.var(r)
-        var.append('{:.2f}'.format(v))
+        var.append(int(v))
         
         v2 = np.var([ma, 100.0 - ma - mi])
-        var2.append('{:.2f}'.format(v2))
+        var2.append(int(v2))
         
         if v < AP_VAR_MIN:
             
@@ -67,7 +67,7 @@ def calc_pre_avg(pre_1, pre_2):
     for p1, p2 in zip(pre_1, pre_2):
         av = [int(x * WEIGTHS_PRE[W_PRE_1] + y * WEIGTHS_PRE[W_PRE_2]) 
                 for x, y in zip(p1, p2)]
-        
+
         pre_avg.append(av)
         
         red.append([int(av[0] + av[1] / 2), 
@@ -82,22 +82,43 @@ def calc_q_from_pre(pre_1, pre_2):
     
     ap, var, var2, l_max, l_min = calc_ap_from_avg_pred(red)
     
-    trip = sorted([ v for a, v in zip(ap, var) if len(a) == 3 ], reverse=True)
-    dob = sorted([ v for a, v in zip(ap, var2) if len(a) == 2 ], reverse=True)
+    trip = [ v for a, v in zip(ap, var) if len(a) == 3 ]
+    doub = [ v for a, v in zip(ap, var2) if len(a) == 2 ]
     
     ord = []
     alt_ap = []
     
-    for a, v, v2, ma, mi, r in zip(ap, var, var2, l_max, l_min, red):
+    for a, v, v2, ma, mi, r, i in zip(ap, var, var2, l_max, l_min, red, range(len(ap))):
         if len(a) == 3:
-            ord.append(trip.index(v) + len(dob) + 1)
+            o = len([t for t in trip if t <= v]) - 1
+            
+            if len([t for t in trip if t == v]) > 0:
+                o -= len([ va2 for va, va2 in zip(var, var2) if va == v and va2 > v2])
+                
+            ord.append(o + len(doub) + 1)
             alt_ap.append(COMPLEMENT[INDEX_TO_VAL[r.index(mi)]])
+            
         elif len(a) == 2:
-            ord.append(dob.index(v2) + 1)
+            o = len([d for d in doub if d <= v2]) - 1
+            
+            if len([t for t in doub if t == v2]) > 0:
+                o -= len([ va2 for va, va2 in zip(var, var2) if va2 == v2 and va > v])
+            
+            ord.append(o + 1)
             alt_ap.append(INDEX_TO_VAL[r.index(ma)])
         else:
             ord.append(0)
             alt_ap.append(a)
+            
+    final_q = ap
+            
+#    if len(trip) == 0:
+#        if len(doub) > 7:
+#            to_red = len(doub) - 7 
+#            for q, o, aa in zip(final_q, ord, alt_ap):
+                
+#    else:
+        
     
-    return ap, var, var2, pre_avg, red, ord, alt_ap
+    return ap, var, var2, pre_avg, red, ord, alt_ap, final_q
     
