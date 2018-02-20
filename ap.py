@@ -111,14 +111,6 @@ def calc_q_from_pre(pre_1, pre_2):
             alt_ap.append(a)
             
     final_q = ap
-            
-#    if len(trip) == 0:
-#        if len(doub) > 7:
-#            to_red = len(doub) - 7 
-#            for q, o, aa in zip(final_q, ord, alt_ap):
-                
-#    else:
-        
     
     return ap, var, var2, pre_avg, red, ord, alt_ap, final_q
     
