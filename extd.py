@@ -244,11 +244,11 @@ class ExtD(object):
         
         save_data_to_csv(output_file, self._mean)
 
-    def load(self):
+    def load(self, force_read_ext = False):
         
         print("Loading external data ...")
         
-        if not self._read_extd():    
+        if force_read_ext or not self._read_extd():    
             
             KScrap.lm_scraping(self._lm)
             KScrap.ve_scraping(self._ve)

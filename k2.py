@@ -33,13 +33,13 @@ from ap import calc_q_from_pre
 from kfiles import save_all_data, read_res_file
 from report import do_report
 
-def retrieve_data(index):
+def retrieve_data(progargs):
     
     success = True
     cl = None
     extd = None
         
-    k = KDat(index)
+    k = KDat(progargs.index)
     
     k.load()
     
@@ -56,7 +56,7 @@ def retrieve_data(index):
             
         extd = ExtD(k.index)
         
-        extd.load()
+        extd.load(progargs.force_read_ext)
     else:
         print("Error loading k ...")
         success = False
@@ -69,7 +69,7 @@ def main(progargs):
     
     print("Here we go ...!!!")
         
-    success, k, cl, extd = retrieve_data(progargs.index)
+    success, k, cl, extd = retrieve_data(progargs)
     
     if success:       
         b1_res = read_res_file(B1_RES_FILE)    
