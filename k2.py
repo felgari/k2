@@ -90,7 +90,7 @@ def main(progargs):
             calc_q_from_pre(pre_1, pre_2)
         
         save_all_data(k, extd, ap, pre_1, pre_2, pre_avg, avg_red, 
-                      var, var2, ord, alt_ap)
+                      var, var2, ord, alt_ap, final_q)
         
     else:
         print("Source data couldn't be loaded, no calculations were made.")

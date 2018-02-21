@@ -155,7 +155,7 @@ def save_all(k, extm, p, p_rf, ap_rf, p_nn, ap_nn, pre_avg, index):
          print("Error saving file: '%s'" % full_path_name)
          
 def save_all_data(k, extd, ap, pre_1, pre_2, pre_avg, avg_red, 
-                  var, var2, ord, alt_ap):
+                  var, var2, ord, alt_ap, final_q):
 
     out_file_name = OUTPUT_FILE_PREFIX + k.index + OUTPUT_FILE_NAME_EXT
     
@@ -183,7 +183,7 @@ def save_all_data(k, extd, ap, pre_1, pre_2, pre_avg, avg_red,
                         extd.cqp[i][0], extd.cqp[i][1], extd.cqp[i][2], \
                         extd.mean[i][0], extd.mean[i][1], extd.mean[i][2], \
                         pre_1[i], pre_2[i], pre_avg[i], avg_red[i], 
-                        var[i], var2[i], ap[i], alt_ap[i], ord[i]]
+                        var[i], var2[i], ap[i], alt_ap[i], ord[i], final_q[i]]
                            
                     f.write("%s%s%s%s%s\n" % ( k.k[i][NAME_LO_COL], CSV_DELIMITER_TAB,
                                        k.k[i][NAME_VI_COL], CSV_DELIMITER_TAB,

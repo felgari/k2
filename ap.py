@@ -76,33 +76,78 @@ def calc_pre_avg(pre_1, pre_2):
         
     return pre_avg, red
 
+def calculate_alt_ap(ap, alt_ap, ord, trip_idxs, n_trip, doub_idxs, n_doub, ref_ap):
+    
+    final_q = [ a for a in ap ]
+
+    mi = min([ord[i] for i in trip_idxs])
+    for i in range(n_trip - ref_ap[AP_TR_IDX]):
+        idx = ord.index(mi)
+        final_q[idx] = alt_ap[idx]
+        doub_idxs.append(mi)
+        mi += 1
+
+    mi = min(ord[i] for i in doub_idxs)
+    for i in range(n_doub - ref_ap[AP_DO_IDX]):
+        idx = ord.index(mi)
+        final_q[idx] = alt_ap[idx]
+        final_q[mi] = alt_ap[mi]
+        mi += 1
+        
+    return final_q
+
+def calculate_final_q(ap, alt_ap, ord):
+    
+    trip_idxs = [ i for i in range(len(ap)) if len(ap[i]) == TR_SIZE ]
+    n_trip = len(trip_idxs)
+    
+    doub_idxs = [ i for i in range(len(ap)) if len(ap[i]) == DO_SIZE ]
+    n_doub = len(doub_idxs)
+    
+    if n_trip > 1: 
+        if n_trip + n_doub > sum(AP_3): # AP_4
+            final_q = calculate_alt_ap(ap, alt_ap, ord,
+                                       trip_idxs, n_trip, doub_idxs, n_doub, 
+                                       AP_4)
+            
+        else: # AP_3
+            final_q = calculate_alt_ap(ap, alt_ap, ord,
+                                       trip_idxs, n_trip, doub_idxs, n_doub, 
+                                       AP_3)
+    else: # AP_2
+        final_q = calculate_alt_ap(ap, alt_ap, ord,
+                                   trip_idxs, n_trip, doub_idxs, n_doub, 
+                                   AP_2)
+        
+    return final_q
+
 def calc_q_from_pre(pre_1, pre_2):
     
     pre_avg, red = calc_pre_avg(pre_1, pre_2)
     
-    ap, var, var2, l_max, l_min = calc_ap_from_avg_pred(red)
+    ap, var3, var2, l_max, l_min = calc_ap_from_avg_pred(red)
     
-    trip = [ v for a, v in zip(ap, var) if len(a) == 3 ]
-    doub = [ v for a, v in zip(ap, var2) if len(a) == 2 ]
+    trip = [ v3 for a, v3 in zip(ap, var3) if len(a) == TR_SIZE ]
+    doub = [ v2 for a, v2 in zip(ap, var2) if len(a) == DO_SIZE ]
     
     ord = []
     alt_ap = []
     
-    for a, v, v2, ma, mi, r, i in zip(ap, var, var2, l_max, l_min, red, range(len(ap))):
-        if len(a) == 3:
-            o = len([t for t in trip if t <= v]) - 1
+    for a, v3, v2, ma, mi, r, i in zip(ap, var3, var2, l_max, l_min, red, range(len(ap))):
+        if len(a) == TR_SIZE:
+            o = len([t for t in trip if t <= v3]) - 1
             
-            if len([t for t in trip if t == v]) > 0:
-                o -= len([ va2 for va, va2 in zip(var, var2) if va == v and va2 > v2])
+            if len([t for t in trip if t == v3]):
+                o -= len([ va2 for va3, va2 in zip(var3, var2) if va3 == v3 and va2 > v2])
                 
             ord.append(o + len(doub) + 1)
             alt_ap.append(COMPLEMENT[INDEX_TO_VAL[r.index(mi)]])
             
-        elif len(a) == 2:
+        elif len(a) == DO_SIZE:
             o = len([d for d in doub if d <= v2]) - 1
             
-            if len([t for t in doub if t == v2]) > 0:
-                o -= len([ va2 for va, va2 in zip(var, var2) if va2 == v2 and va > v])
+            if len([t for t in doub if t == v2]):
+                o -= len([ va2 for va3, va2 in zip(var3, var2) if va2 == v2 and va3 > v3])
             
             ord.append(o + 1)
             alt_ap.append(INDEX_TO_VAL[r.index(ma)])
@@ -110,7 +155,15 @@ def calc_q_from_pre(pre_1, pre_2):
             ord.append(0)
             alt_ap.append(a)
             
-    final_q = ap
+    d = len(doub)
+    t = len(trip)
     
-    return ap, var, var2, pre_avg, red, ord, alt_ap, final_q
+    if ( d == AP_2[AP_DO_IDX] and t == AP_2[AP_TR_IDX] ) or \
+        ( d == AP_3[AP_DO_IDX] and t == AP_3[AP_TR_IDX] ) \
+        or ( d == AP_4[AP_DO_IDX] and t == AP_4[AP_TR_IDX] ):
+        final_q = ap
+    else:
+        final_q = calculate_final_q(ap, alt_ap, ord)
+    
+    return ap, var3, var2, pre_avg, red, ord, alt_ap, final_q
     
