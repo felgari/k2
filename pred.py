@@ -319,15 +319,16 @@ def gen_hist(k, cl, b1_res, a2_res):
     
     return data_for_predict, data_to_predict
 
-def predict_k(kd, cl, b1_res, a2_res):
+def predict_k(kd, cl, b1_res, a2_res, force_calc):
     
     pre_rf = []
     sco_rf = []
     pre_df = []
     sco_df = []
     
-    pre_rf = _read_pre(kd.index, PREF_RF_PREFIX) 
-    pre_df = _read_pre(kd.index, PREF_DF_PREFIX)
+    if not force_calc:
+        pre_rf = _read_pre(kd.index, PREF_RF_PREFIX) 
+        pre_df = _read_pre(kd.index, PREF_DF_PREFIX)
     
     if len(pre_rf) > 0 and len(pre_df) > 0:       
         sco_rf = 0.0

@@ -80,7 +80,8 @@ def main(progargs):
 
         a2_per = calc_res_per(a2_res, cl, A2_TYPE)
         
-        pre_1, sco_1, pre_2, sco_2 = predict_k(k, cl, b1_res, a2_res)
+        pre_1, sco_1, pre_2, sco_2 = predict_k(k, cl, b1_res, a2_res, 
+                                               progargs.force_calc)
           
         rep_ap, trend_1, trend_2 = do_report(k.index, k.k, cl, 
                                          b1_res, a2_res, b1_per, a2_per, 
