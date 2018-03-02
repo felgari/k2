@@ -467,20 +467,18 @@ class ResData(object):
             names.add(ar.lo)
             names.add(ar.vi)
             
-        return sorted(list(names)) 
+        return sorted(list(names))  
     
-    def get_res(self, name, is_lo):
+    def get_res(self, lo_name, vi_name):  
         
-        res = []
+        res = []   
         
         for ar in self._all_res:
-            if is_lo:
-                if ar.lo == name:
-                    res.append(ar)
-            else:
-                if ar.vi == name:
-                    res.append(ar)            
-        return res       
+            if ar.lo == lo_name and ar.vi == vi_name:
+                res.append(ar)
+                break
+            
+        return res  
     
     def process_res(self):
         
