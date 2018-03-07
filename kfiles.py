@@ -169,29 +169,22 @@ def save_all_data(k, extd, ap, pre_1, pre_2, pre_avg, avg_red,
             
             f.write("%s\n" % CSV_DELIMITER_TAB.join(str(e) for e in OUT_COLS))
             
-            for i in range(len(k.k)):  
+            for i in range(len(k.k)):    
                 
-                if k.k[i][NAME_LO_COL] != K_UNKNOWN_NAME and \
-                    k.k[i][NAME_VI_COL] != K_UNKNOWN_NAME:
-                
-                    row = [ 
-#                           extd.lm[i][0], extd.lm[i][1], extd.lm[i][2], \
-#                        extd.ve[i][0], extd.ve[i][1], extd.ve[i][2], \
-#                        extd.qu[i][0], extd.qu[i][1], extd.qu[i][2], \
-#                        extd.q1[i][0], extd.q1[i][1], extd.q1[i][2], \
-#                        extd.cq[i][0], extd.cq[i][1], extd.cq[i][2], \
-                        extd.cqp[i][0], extd.cqp[i][1], extd.cqp[i][2],
-                        extd.mean[i][0], extd.mean[i][1], extd.mean[i][2],
-                        pre_1[i], pre_2[i], pre_avg[i], avg_red[i], 
-                        var[i], var2[i], ap[i], alt_ap[i], ord[i], final_q[i]]
-                           
-                    f.write("%s%s%s%s%s\n" % ( k.k[i][NAME_LO_COL], CSV_DELIMITER_TAB,
-                                       k.k[i][NAME_VI_COL], CSV_DELIMITER_TAB,
-                                       CSV_DELIMITER_TAB.join(str(e) for e in row)))
-                else:
-                    f.write("%s%s%s%s%s\n" % (K_UNKNOWN_NAME, CSV_DELIMITER_TAB, 
-                                            K_UNKNOWN_NAME, CSV_DELIMITER_TAB, 
-                                            CSV_DELIMITER_TAB.join(str(e) for e in DEFAULT_ROW)))
+                row = [ 
+    #               extd.lm[i][0], extd.lm[i][1], extd.lm[i][2], \
+    #               extd.ve[i][0], extd.ve[i][1], extd.ve[i][2], \
+    #               extd.qu[i][0], extd.qu[i][1], extd.qu[i][2], \
+    #               extd.q1[i][0], extd.q1[i][1], extd.q1[i][2], \
+    #               extd.cq[i][0], extd.cq[i][1], extd.cq[i][2], \
+                    extd.cqp[i][0], extd.cqp[i][1], extd.cqp[i][2],
+                    extd.mean[i][0], extd.mean[i][1], extd.mean[i][2],
+                    pre_1[i], pre_2[i], pre_avg[i], avg_red[i], 
+                    var[i], var2[i], ap[i], alt_ap[i], ord[i], final_q[i]]
+                       
+                f.write("%s%s%s%s%s\n" % ( k.k[i][NAME_LO_COL], CSV_DELIMITER_TAB,
+                                   k.k[i][NAME_VI_COL], CSV_DELIMITER_TAB,
+                                   CSV_DELIMITER_TAB.join(str(e) for e in row)))
             
         print("File with all data saved in: %s" % full_path_name)
            

@@ -45,7 +45,10 @@ def _read_pre(index, file_name_prefix):
             reader = csv.reader(f)
         
             for row in reader:
-                pre_data.append([int(r) for r in row])
+                try:
+                    pre_data.append([int(r) for r in row])
+                except ValueError:
+                    pre_data.append([r for r in row])
                 
             if len(pre_data) > 0:
                 print("Read pred from file: %s" % full_path_name)
@@ -68,8 +71,13 @@ def _save_pre(index, file_name_prefix, pre_data):
     try:
 
         with open(full_path_name, 'w') as f:        
-            for pd in pre_data:            
-                f.write(CSV_DELIMITER.join( "%d" % int(p) for p in pd))
+            for pd in pre_data:     
+                    
+                try:   
+                    f.write(CSV_DELIMITER.join( "%d" % int(p) for p in pd))
+                except ValueError:
+                    f.write(CSV_DELIMITER.join( "%d" % 0 for p in pd))
+                    
                 f.write("\n")
         
         print("File saved: %s" % full_path_name)
