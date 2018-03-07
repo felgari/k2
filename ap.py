@@ -42,7 +42,9 @@ def calc_ap_from_avg_pred(red):
         v2 = np.var([ma, 100.0 - ma - mi])
         var2.append(int(v2))
         
-        if v < AP_VAR_MIN:
+        if not int(v):
+            ap.append(AP_MID_VAL)
+        elif v < AP_VAR_MIN:
             
             if ma > AP_ENO_VAL_VAR:
                 ap.append(INDEX_TO_VAL[r.index(ma)])
@@ -79,20 +81,22 @@ def calc_pre_avg(pre_1, pre_2):
 def calculate_alt_ap(ap, alt_ap, ord, trip_idxs, n_trip, doub_idxs, n_doub, ref_ap):
     
     final_q = [ a for a in ap ]
+    
+    if trip_idxs:
+        mi = min([ord[i] for i in trip_idxs])
+        for i in range(n_trip - ref_ap[AP_TR_IDX]):
+            idx = ord.index(mi)
+            final_q[idx] = alt_ap[idx]
+            doub_idxs.append(mi)
+            mi += 1
 
-    mi = min([ord[i] for i in trip_idxs])
-    for i in range(n_trip - ref_ap[AP_TR_IDX]):
-        idx = ord.index(mi)
-        final_q[idx] = alt_ap[idx]
-        doub_idxs.append(mi)
-        mi += 1
-
-    mi = min(ord[i] for i in doub_idxs)
-    for i in range(n_doub - ref_ap[AP_DO_IDX]):
-        idx = ord.index(mi)
-        final_q[idx] = alt_ap[idx]
-        final_q[mi] = alt_ap[mi]
-        mi += 1
+    if doub_idxs:
+        mi = min(ord[i] for i in doub_idxs)
+        for i in range(n_doub - ref_ap[AP_DO_IDX]):
+            idx = ord.index(mi)
+            final_q[idx] = alt_ap[idx]
+            final_q[mi] = alt_ap[mi]
+            mi += 1
         
     return final_q
 
