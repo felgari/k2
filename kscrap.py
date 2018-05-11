@@ -379,15 +379,36 @@ class KScrap(object):
     
     # ------------------------------------- Cl scraping.
     @staticmethod
-    def _fill_cl_data(data, index, size, bsObj, cobj_data):
+    def _fill_cl_p_data(data, index, size, bsObj, cobj_data):
         
         temp_lst = []
         
         for cobj in bsObj.findAll(CL_COBJ, cobj_data):        
-            temp_lst.append(cobj.get_text())  
+            temp_lst.append(cobj.get_text()) 
+
+        for i in range(len(temp_lst)):
+            data[i][index] = int(temp_lst[i])          
+    
+    @staticmethod
+    def _fill_cl_data(data, index, size, bsObj, cobj_data):
+        
+        lst_pc = []
+        lst_pf = []
+        
+        for cobj in bsObj.findAll(CL_COBJ, cobj_data):
             
-        for i in range(size):
-            data[i][index] = int(temp_lst[i])                  
+            label =  ' '.join(cobj['class']) 
+
+            if label == CL_PC_LABEL:
+                lst_pc.append(cobj.get_text())  
+            elif label == CL_PF_LABEL:
+                lst_pf.append(cobj.get_text())  
+
+        for i in range(len(lst_pc)):
+            data[i][index] = int(lst_pc[i])  
+
+        for i in range(len(lst_pf)):
+            data[i][index + CL_SIZE + 1] = int(lst_pf[i])  
     
     @staticmethod
     def _process_cl_page(bsObj, size):
@@ -396,7 +417,7 @@ class KScrap(object):
         
         temp_lst = []        
         
-        for cobj in bsObj.findAll(CL_COBJ, CL_EQ_DICT): 
+        for cobj in bsObj.findAll(CL_SPAN, CL_EQ_DICT): 
             the_text = cobj.get_text()
             if the_text[-1] == CL_ESP_CHR:
                 the_text = the_text[:-1]
@@ -407,11 +428,16 @@ class KScrap(object):
                 cl_data[i][CL_POS_COL] = i + 1
                 cl_data[i][CL_NAME_COL] = NAMES_CONVERT[temp_lst[i]]
             except KeyError as ke:
-                print("ERROR: %s" % ke)                  
-           
+                print("ERROR: %s" % ke)    
+            except IndexError as ie:    
+                print("ERROR: %s -> %s %d" % (ie, temp_lst, i))
+                
+        KScrap._fill_cl_p_data(cl_data, CL_INDEX_P_LO, size, bsObj, CL_PC)
+        KScrap._fill_cl_p_data(cl_data, CL_INDEX_P_LO + 1 + CL_SIZE, size, bsObj, CL_PF)
+
         for i, elt in enumerate(CL_ELEMENTS):            
-            KScrap._fill_cl_data(cl_data, i + CL_INDEX_P_LO, size, bsObj, elt) 
-            
+            KScrap._fill_cl_data(cl_data, CL_INDEX_P_LO + 1 + i, size, bsObj, elt) 
+        print(cl_data)            
         return cl_data            
     
     @staticmethod
