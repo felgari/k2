@@ -85,18 +85,24 @@ def calculate_alt_ap(ap, alt_ap, ord, trip_idxs, n_trip, doub_idxs, n_doub, ref_
     if trip_idxs:
         mi = min([ord[i] for i in trip_idxs])
         for i in range(n_trip - ref_ap[AP_TR_IDX]):
-            idx = ord.index(mi)
-            final_q[idx] = alt_ap[idx]
-            doub_idxs.append(mi)
-            mi += 1
+            try:
+                idx = ord.index(mi)
+                final_q[idx] = alt_ap[idx]
+                doub_idxs.append(mi)
+                mi += 1
+            except ValueError:
+                pass
 
     if doub_idxs:
         mi = min(ord[i] for i in doub_idxs)
         for i in range(n_doub - ref_ap[AP_DO_IDX]):
-            idx = ord.index(mi)
-            final_q[idx] = alt_ap[idx]
-            final_q[mi] = alt_ap[mi]
-            mi += 1
+            try:
+                idx = ord.index(mi)
+                final_q[idx] = alt_ap[idx]
+                final_q[mi] = alt_ap[mi]
+                mi += 1
+            except ValueError:
+                pass
         
     return final_q
 
