@@ -437,7 +437,7 @@ class KScrap(object):
 
         for i, elt in enumerate(CL_ELEMENTS):            
             KScrap._fill_cl_data(cl_data, CL_INDEX_P_LO + 1 + i, size, bsObj, elt) 
-        print(cl_data)            
+         
         return cl_data            
     
     @staticmethod
