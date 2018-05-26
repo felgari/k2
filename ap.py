@@ -67,8 +67,11 @@ def calc_pre_avg(pre_1, pre_2):
     red = []    
 
     for p1, p2 in zip(pre_1, pre_2):
-        av = [int(x * WEIGTHS_PRE[W_PRE_1] + y * WEIGTHS_PRE[W_PRE_2]) 
-                for x, y in zip(p1, p2)]
+        if len(p1) > 1 and len(p2) > 1:
+            av = [int(x * WEIGTHS_PRE[W_PRE_1] + y * WEIGTHS_PRE[W_PRE_2]) 
+                    for x, y in zip(p1, p2)]
+        else:
+            av = [0] * len(CHR_TO_RES)
 
         pre_avg.append(av)
         
