@@ -252,7 +252,7 @@ class ExtD(object):
             
             KScrap.lm_scraping(self._lm)
             KScrap.ve_scraping(self._ve)
-            KScrap.qu_scraping(self._qu)
+            #KScrap.qu_scraping(self._qu)
             #KScrap.q1_scraping(self._q1, self._index)
             KScrap.cq_scraping(self._cq, self._cqp)
             
