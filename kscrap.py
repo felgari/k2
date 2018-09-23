@@ -49,10 +49,6 @@ class KScrap(object):
         print("Reading page from: %s" % url)
         
         bsObj = BeautifulSoup(requests.get(url).content, "lxml")
-        
-
-            
-            
                 
         return bsObj 
     
