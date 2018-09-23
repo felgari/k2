@@ -119,7 +119,7 @@ class ExtD(object):
     def mean(self):
         
         if not len(self._mean):
-            self.calc_mean()                                                      
+            self._calc_mean()                                                      
         
         return self._mean
         
@@ -158,12 +158,12 @@ class ExtD(object):
         else:
             print("Ignoring q1 for mean.")
             
-        if sum(self._cq[0]):
+        if 0:#sum(self._cq[0]):
             mean_sources.append(self._cq)
         else:
             print("Ignoring cq for mean.")
         
-        if len(mean_sources) > 1:
+        if len(mean_sources) >= 1:
             for i in range(NUM_ROWS):
                 new_row = []
                 for j in range(NUM_COLS):
