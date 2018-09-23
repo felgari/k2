@@ -582,7 +582,7 @@ def load_res():
     
     res = ResData() 
     
-    res.load_res(SIMUL_DATA_PATH)
+    res.load_res(DATA_PATH)
     
     return res
 
@@ -649,6 +649,9 @@ def calc_res_per(res, cl, type):
         
         if s > 0:
             the_dict[x] = [v1, v2, v3]
+            
+    #for key in sorted(the_dict.keys()):
+        #print("%s: %s" % (key, the_dict[key]))
 
     return the_dict
 
