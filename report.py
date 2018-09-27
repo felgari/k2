@@ -22,6 +22,7 @@
 import sys
 import os
 import csv
+import numpy as np
 
 from ctes import *
 from avpos import AvPos
@@ -58,7 +59,7 @@ def do_report(index, k_data, cl, b1_res, a2_res, b1_per, a2_per, extd,
     aptr = ApTrend()
     
     print("Saving to file: %s" % out_file_name)
-                    
+        
     try:    
     
         with open(out_file_name, 'w') as f: 
@@ -68,22 +69,22 @@ def do_report(index, k_data, cl, b1_res, a2_res, b1_per, a2_per, extd,
 
                 k_name_1 = k_elt[K_NAME_1_COL]
                 k_name_2 = k_elt[K_NAME_2_COL]
-                
+
                 if k_name_1 != K_UNKNOWN_NAME and k_name_2 != K_UNKNOWN_NAME:
                 
-                    if NAME_GROUP[k_name_1] == GROUP_B1:
-                        data = b1_res
-                        elt_type = TYPE_1_COL
-                        cl_1 = cl.b1_data(k_name_1)
-                        cl_2 = cl.b1_data(k_name_2)
-                        per = b1_per
-                    else:
+                    data = b1_res
+                    elt_type = TYPE_1_COL
+                    cl_1 = cl.b1_data(k_name_1)
+                    cl_2 = cl.b1_data(k_name_2)
+                    per = b1_per
+                    
+                    if not len(cl_1):
                         data = a2_res
                         elt_type = TYPE_2_COL
                         cl_1 = cl.a2_data(k_name_1)
                         cl_2 = cl.a2_data(k_name_2)
                         per = a2_per
-
+                        
                     mat1, val_trend1 = get_matchings(k_name_1, data, True)
                     mat2, val_trend2 = get_matchings(k_name_2, data, False)
 
@@ -94,26 +95,19 @@ def do_report(index, k_data, cl, b1_res, a2_res, b1_per, a2_per, extd,
                     
                     f.write("-> %s (%s) - %s (%s)\n" % \
                             (k_name_1, cl_1[CL_POS_COL], k_name_2, cl_2[CL_POS_COL]))
-                        
+                    
                     f.write("Ext %s\n" % extd.mean[idx])
-                        
-                    dif = cl_1[CL_POS_COL] - cl_2[CL_POS_COL]
-
-                    val = [0, 0, 0]
                     
-                    for x in list(range(dif - DIF_VAL, dif + DIF_VAL + 1)):
+                    dif_pos = cl_1[CL_POS_COL] - cl_2[CL_POS_COL]
+                    f.write("Dif: %d\n" % (dif_pos))
+                    
+                    for i in range(dif_pos - DIF_RANGE, dif_pos + DIF_RANGE + 1):
                         try:
-                            per_val = per[x]
-                            
-                            val = [ val[i] + per_val[i] for i in range(len(val))]
-                            
+                            f.write("%d %s\n" % (i, per[i]))
                         except KeyError:
-                            pass
-                           
-                    f.write("Env %s of %d\n" % ([int(v * 100 / sum(val)) for v in val], 
-                                                sum(val)))  
-                    
-                    f.write("CQP %s\n" % extd.cqp[idx])
+                            f.write("%d No disp\n" % i)
+                      
+                    dif = cl_1[CL_POS_COL] - cl_2[CL_POS_COL]
                     
                     trend = rdp.trend(cl_1[CL_POS_COL], cl_2[CL_POS_COL], elt_type)
                     
@@ -121,11 +115,25 @@ def do_report(index, k_data, cl, b1_res, a2_res, b1_per, a2_per, extd,
 
                     name_1_trend = avp.trend(k_name_1)
                     name_2_trend = avp.trend(k_name_2)
+                    
+                    avg_1 = np.mean(avp.avpos(k_name_1)[-LAST_POS:])
+                    if avg_1 > avp.avpos(k_name_1)[-1]:
+                        name_1_curr = AVPOS_TREND_DOWN
+                    else:
+                        name_1_curr = AVPOS_TREND_UP
+                        
+                    avg_2 = np.mean(avp.avpos(k_name_2)[-LAST_POS:])
+                    if avg_2 > avp.avpos(k_name_2)[-1]:
+                        name_2_curr = AVPOS_TREND_DOWN
+                    else:
+                        name_2_curr = AVPOS_TREND_UP
 
-                    f.write("Pos. %s: %s %s\n" % \
-                            (k_name_1, avp.avpos(k_name_1), name_1_trend))
-                    f.write("Pos. %s: %s %s\n" % \
-                            (k_name_2, avp.avpos(k_name_2), name_2_trend))
+                    f.write("Pos. %s: %s\n(AVG: %d) - Current %s - Trend %s\n" % \
+                            (k_name_1, avp.avpos(k_name_1), 
+                             avg_1, name_1_curr, name_1_trend))
+                    f.write("Pos. %s: %s\n(AVG: %d) - Current %s - Trend %s\n" % \
+                            (k_name_2, avp.avpos(k_name_2), 
+                             avg_2, name_2_curr, name_2_trend))
                     
                     if len(trend) > 0:
                         ap_t = aptr.calculate_ap(trend, name_1_trend, 
