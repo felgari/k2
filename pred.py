@@ -329,46 +329,44 @@ def gen_hist(k, cl, b1_res, a2_res):
 
 def predict_k(kd, cl, b1_res, a2_res, force_calc):
     
-    pre_rf = []
-    sco_rf = []
-    pre_df = []
-    sco_df = []
+    pre_rf = [[1, 0, 0, 0, 0]] * NUM_ROWS
+    sco_rf = 0.0
+    pre_df = [[1, 0, 0, 0, 0]] * NUM_ROWS
+    sco_df = 0.0
     
-    if not force_calc:
-        pre_rf = _read_pre(kd.index, PREF_RF_PREFIX) 
-        pre_df = _read_pre(kd.index, PREF_DF_PREFIX)
+    if int(kd.index) > MIN_J_FOR_PRED:
     
-    if len(pre_rf) > 0 and len(pre_df) > 0:       
-        sco_rf = 0.0
-        sco_df = 0.0
-    
-    else:
-        data_for_predict, data_to_predict = gen_hist(kd.k, cl, b1_res, a2_res)
-                
-        if len(data_for_predict) == len(data_to_predict):
-            
-            for i in range(len(data_for_predict)):
-                
-                print("Predicting: %s - %s" % (kd.k[i][K_NAME_1_COL], 
-                                                kd.k[i][K_NAME_2_COL]))
-                
-                if len(data_for_predict[i]) > 0 and len(data_to_predict[i]) > 0:
-                    p1, s1, p2, s2 = predict(data_for_predict[i], data_to_predict[i])
-                else:
-                    p1 = [TREND_IG]
-                    s1 = 0.0
-                    p2 = [TREND_IG]
-                    s2 = 0.0
-                
-                pre_rf.append(p1)
-                sco_rf.append(s1)
-                pre_df.append(p2)
-                sco_df.append(s2)
-                
-            _save_pre(kd.index, PREF_RF_PREFIX, pre_rf)
-            _save_pre(kd.index, PREF_DF_PREFIX, pre_df)
+        if not force_calc:
+            pre_rf = _read_pre(kd.index, PREF_RF_PREFIX) 
+            pre_df = _read_pre(kd.index, PREF_DF_PREFIX)
+        
         else:
-            print("ERROR: Length of data for prediction don't match: %d %d" %
-                (len(data_for_predict), len(data_to_predict)))
-    
+            data_for_predict, data_to_predict = gen_hist(kd.k, cl, b1_res, a2_res)
+                    
+            if len(data_for_predict) == len(data_to_predict):
+                
+                for i in range(len(data_for_predict)):
+                    
+                    print("Predicting: %s - %s" % (kd.k[i][K_NAME_1_COL], 
+                                                    kd.k[i][K_NAME_2_COL]))
+                    
+                    if len(data_for_predict[i]) > 0 and len(data_to_predict[i]) > 0:
+                        p1, s1, p2, s2 = predict(data_for_predict[i], data_to_predict[i])
+                    else:
+                        p1 = [TREND_IG]
+                        s1 = 0.0
+                        p2 = [TREND_IG]
+                        s2 = 0.0
+                    
+                    pre_rf.append(p1)
+                    sco_rf.append(s1)
+                    pre_df.append(p2)
+                    sco_df.append(s2)
+                    
+                _save_pre(kd.index, PREF_RF_PREFIX, pre_rf)
+                _save_pre(kd.index, PREF_DF_PREFIX, pre_df)
+            else:
+                print("ERROR: Length of data for prediction don't match: %d %d" %
+                    (len(data_for_predict), len(data_to_predict)))
+            
     return pre_rf, sco_rf, pre_df, sco_df
