@@ -101,17 +101,22 @@ def do_report(index, k_data, cl, b1_res, a2_res, b1_per, a2_per, extd,
                     dif_pos = cl_1[CL_POS_COL] - cl_2[CL_POS_COL]
                     f.write("Dif: %d\n" % (dif_pos))
                     
+                    sum_ran = None
                     for i in range(dif_pos - DIF_RANGE, dif_pos + DIF_RANGE + 1):
                         try:
+                            if sum_ran:
+                                sum_ran = [ sum_ran[j] + per[i][j] for j in range(len(sum_ran))]
+                            else:
+                                sum_ran = per[i]
                             f.write("%d %s\n" % (i, per[i]))
                         except KeyError:
-                            f.write("%d No disp\n" % i)
+                            f.write("%d No disp\n" % i) 
                       
                     dif = cl_1[CL_POS_COL] - cl_2[CL_POS_COL]
                     
                     trend = rdp.trend(cl_1[CL_POS_COL], cl_2[CL_POS_COL], elt_type)
                     
-                    f.write("Trend %s\n" % trend)
+                    f.write("Sm %s -> %s \n" % (sum_ran, trend))
 
                     name_1_trend = avp.trend(k_name_1)
                     name_2_trend = avp.trend(k_name_2)
