@@ -46,6 +46,8 @@ def do_report(index, k_data, cl, b1_res, a2_res, b1_per, a2_per, extd,
     
     trend_2 = []
     
+    the_trend = []
+    
     out_file_name = os.path.join(DATA_PATH, report_file_name(index))
     
     avp = AvPos() 
@@ -115,6 +117,8 @@ def do_report(index, k_data, cl, b1_res, a2_res, b1_per, a2_per, extd,
                     dif = cl_1[CL_POS_COL] - cl_2[CL_POS_COL]
                     
                     trend = rdp.trend(cl_1[CL_POS_COL], cl_2[CL_POS_COL], elt_type)
+                    
+                    the_trend.append(trend)
                     
                     f.write("Sm %s -> %s \n" % (sum_ran, trend))
 
@@ -198,7 +202,7 @@ def do_report(index, k_data, cl, b1_res, a2_res, b1_per, a2_per, extd,
     except IndexError as ie:
         print("IndexError saving file: '%s'" % out_file_name)
     
-    return rep_ap, trend_1, trend_2
+    return rep_ap, trend_1, trend_2, the_trend
     
 def report_generated(index):
     

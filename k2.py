@@ -82,8 +82,8 @@ def main(progargs):
         
         pre_1, sco_1, pre_2, sco_2 = predict_k(k, cl, b1_res, a2_res, 
                                                progargs.force_calc)
-          
-        rep_ap, trend_1, trend_2 = do_report(k.index, k.k, cl, 
+
+        rep_ap, trend_1, trend_2, the_trend = do_report(k.index, k.k, cl, 
                                          b1_res, a2_res, b1_per, a2_per, 
                                          extd, pre_1, sco_1, pre_2, sco_2)
         
@@ -91,7 +91,7 @@ def main(progargs):
             calc_q_from_pre(pre_1, pre_2)
         
         save_all_data(k, extd, ap, pre_1, pre_2, pre_avg, avg_red, 
-                      var, var2, ord, alt_ap, final_q)
+                      var, var2, ord, alt_ap, final_q, rep_ap, the_trend)
         
     else:
         print("Source data couldn't be loaded, no calculations were made.")
