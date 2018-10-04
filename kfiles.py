@@ -155,7 +155,7 @@ def save_all(k, extm, p, p_rf, ap_rf, p_nn, ap_nn, pre_avg, index):
          print("Error saving file: '%s'" % full_path_name)
          
 def save_all_data(k, extd, ap, pre_1, pre_2, pre_avg, avg_red, 
-                  var, var2, ord, alt_ap, final_q):
+                  var, var2, ord, alt_ap, final_q, rep_ap, the_trend):
 
     out_file_name = OUTPUT_FILE_PREFIX + k.index + OUTPUT_FILE_NAME_EXT
     
@@ -177,8 +177,10 @@ def save_all_data(k, extd, ap, pre_1, pre_2, pre_avg, avg_red,
     #               extd.qu[i][0], extd.qu[i][1], extd.qu[i][2], \
     #               extd.q1[i][0], extd.q1[i][1], extd.q1[i][2], \
     #                extd.cq[i][0], extd.cq[i][1], extd.cq[i][2], \
-                    extd.cqp[i][0], extd.cqp[i][1], extd.cqp[i][2],
-                    extd.mean[i][0], extd.mean[i][1], extd.mean[i][2]
+    #                extd.cqp[i][0], extd.cqp[i][1], extd.cqp[i][2],
+                    extd.mean[i][0], extd.mean[i][1], extd.mean[i][2],
+                    the_trend[i][0], the_trend[i][1], the_trend[i][2],
+                    rep_ap[i]
                     #,pre_1[i], pre_2[i], pre_avg[i], avg_red[i], 
                     #var[i], var2[i], ap[i], alt_ap[i], ord[i], final_q[i]
                     ]
