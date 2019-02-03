@@ -653,7 +653,7 @@ def calc_res_per(res, cl, type):
     #for key in sorted(the_dict.keys()):
         #print("%s: %s" % (key, the_dict[key]))
 
-    return the_dict
+    return the_dict 
 
 if __name__ == "__main__":  
     

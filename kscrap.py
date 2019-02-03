@@ -181,6 +181,43 @@ class KScrap(object):
         
         return KScrap._process_re_page(bsObj)    
     
+    # ------------------------------------- Resm scraping.   
+    @staticmethod
+    def resm_scraping(url):
+        
+        data_j = []
+        data_loc = []
+        data_vis = []
+        data_res = []
+        
+        bsObj = KScrap.retrieve_page(url)
+        
+        for cobj in bsObj.findAll(RESM_COBJ, RESM_COBJ_DICT):  
+            
+            for eobj in cobj.findAll("caption"): 
+                j_text = eobj.get_text().strip()     
+                   
+            pos_j = j_text.find(' ')
+            
+            loc = []
+            vis = []
+            res = [] 
+                
+            for eobj in cobj.findAll(RESM_OBJ_LOC, RESM_OBJ_LOC_DICT): 
+                loc.append(eobj.get_text().strip()) 
+            for eobj in cobj.findAll(RESM_OBJ_VIS, RESM_OBJ_VIS_DICT): 
+                vis.append(eobj.get_text().strip())   
+            for eobj in cobj.findAll(RESM_OBJ_RES, RESM_OBJ_RES_DICT): 
+                res.append(eobj.get_text().strip())
+            
+            if len(res) > 0 and res[0].find('-') > 0:
+                data_j.append(j_text[pos_j + 1:])
+                data_loc.extend(loc)
+                data_vis.extend(vis)
+                data_res.extend(res)
+                    
+        return data_j, data_loc, data_vis, data_res
+    
     # ------------------------------------- LM scraping.   
     @staticmethod 
     def _process_lm_page(bsObj, lm):
@@ -264,7 +301,7 @@ class KScrap(object):
             
             elif n >= QU_FIRST_COL and n <= QU_LAST_COL:
     
-                qu[i][j] = int(cobj.get_text())
+                qu[i][j] = int(cobj.get_text()[:-1])
                 
                 j += 1
                 if j == NUM_COLS:
@@ -291,7 +328,7 @@ class KScrap(object):
     # ------------------------------------- Q1 scraping.
     @staticmethod
     def _process_q1_page(bsObj, q1):
-        
+        print(bsObj)
         try:                       
             json_obj = bsObj.find(Q1_COBJ).get_text()
             

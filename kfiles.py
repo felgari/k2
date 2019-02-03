@@ -115,6 +115,53 @@ def extract_list_text(txt, num):
     
     return the_list   
 
+def save_file_resm(out_file_name, index, loc, vis, res, size):
+    
+    the_size = int(size / 2)
+    
+    if len(loc) == len(vis) and len(vis) == len(res):
+    
+        full_path_name = os.path.join(DATA_PATH, out_file_name)
+        
+        print("Saving res file: %s" % full_path_name)
+        
+        try:
+            
+            with open(full_path_name, 'w') as f:
+        
+                for i in range(len(index)):
+                    
+                    for j in range(the_size):
+                        
+                        pos = res[i * the_size + j].find('-')
+                        
+                        if pos > 0:
+                            loc_v = int(res[i * the_size + j][:pos])
+                            vis_v = int(res[i * the_size + j][pos+1:])
+                            
+                            if loc_v > vis_v:
+                                lv = MAX_IS_FIRST
+                            elif loc_v == vis_v:
+                                lv = MAX_IS_SECOND
+                            else:
+                                lv = MAX_IS_THIRD
+        
+                            f.write("%s,%s,%s,%s,%d,%d,%s\n" % 
+                                    (index[i], 
+                                     NAMES_CONVERT[loc[i * the_size + j]], 
+                                     NAMES_CONVERT[vis[i * the_size + j]], 
+                                     res[i * the_size + j], 
+                                     loc_v, vis_v, lv))
+                        else:
+                            break
+        
+        except IOError as ioe:
+             print("Error saving file: '%s'" % full_path_name) 
+             
+    else:     
+        print("Error length of date is different: %d %d %d" % 
+              (len(loc), len(vis), len(res)))
+
 def save_data_to_csv(out_file_name, data, path = DATA_PATH):
     
     full_path_name = os.path.join(path, out_file_name)

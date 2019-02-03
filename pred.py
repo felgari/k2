@@ -368,5 +368,7 @@ def predict_k(kd, cl, b1_res, a2_res, force_calc):
             else:
                 print("ERROR: Length of data for prediction don't match: %d %d" %
                     (len(data_for_predict), len(data_to_predict)))
+    else:
+        print("No min to pred.")
             
     return pre_rf, sco_rf, pre_df, sco_df

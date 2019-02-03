@@ -158,7 +158,7 @@ class ExtD(object):
         else:
             print("Ignoring q1 for mean.")
             
-        if 0:#sum(self._cq[0]):
+        if sum(self._cq[0]):
             mean_sources.append(self._cq)
         else:
             print("Ignoring cq for mean.")
@@ -250,9 +250,9 @@ class ExtD(object):
         
         if force_read_ext or not self._read_extd():    
             
-            KScrap.lm_scraping(self._lm)
-            KScrap.ve_scraping(self._ve)
-            #KScrap.qu_scraping(self._qu)
+            #KScrap.lm_scraping(self._lm)
+            #KScrap.ve_scraping(self._ve)
+            KScrap.qu_scraping(self._qu)
             #KScrap.q1_scraping(self._q1, self._index)
             #KScrap.cq_scraping(self._cq, self._cqp)
             

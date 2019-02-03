@@ -61,7 +61,7 @@ def do_report(index, k_data, cl, b1_res, a2_res, b1_per, a2_per, extd,
     aptr = ApTrend()
     
     print("Saving to file: %s" % out_file_name)
-        
+ 
     try:    
     
         with open(out_file_name, 'w') as f: 
@@ -163,6 +163,8 @@ def do_report(index, k_data, cl, b1_res, a2_res, b1_per, a2_per, extd,
                         f.write("Pre DF (%.1f): %s\n" % (sco_df[idx], pre_df[idx]))
                     
                     f.write("%s\n" % FIRST_SEP)
+                    
+                    the_sco = []
 
                     for m in mat1:
                         if elt_type == TYPE_1_COL:
@@ -171,10 +173,38 @@ def do_report(index, k_data, cl, b1_res, a2_res, b1_per, a2_per, extd,
                             mat_cl = cl.a2_data(NAMES_CONVERT[m[MAT_NAME_2_COL]])
                             
                         m[MAT_RES_COL] = CHR_TO_RES[m[MAT_RES_COL]]
+                        
+                        the_sco.append(int(m[-1][:m[-1].find('-')]))
+                        
+                        the_mark = ''
+
+                        if m[2] == MAX_IS_FIRST:
+                            if mat_cl[CL_POS_COL] + DIFF_POS_THIRD < cl_1[CL_POS_COL]:
+                                the_mark = THE_MARK
+                        elif m[2] == MAX_IS_SECOND:
+                            if cl_1[CL_POS_COL] + DIFF_POS_SECOND < mat_cl[CL_POS_COL]:
+                                the_mark = THE_MARK                                           
+                        elif cl_1[CL_POS_COL] + DIFF_POS_THIRD < mat_cl[CL_POS_COL]:
+                                the_mark = THE_MARK
                             
-                        f.write("%s (%s)\n" % (m, mat_cl[CL_POS_COL]))
+                        if mat_cl[CL_POS_COL] < cl_2[CL_POS_COL] + REF_LEVEL:
+                            the_ref = "%s [%s] " % (THE_REF, m[2])
+                        else:
+                            the_ref = ''
+                                
+                        f.write("%s (%s) %s %s\n" % (m, mat_cl[CL_POS_COL], 
+                                                     the_ref ,the_mark))
+                        
+                    if not len(the_sco):
+                        print(m[MAT_NAME_2_COL])
+                        print(elt_type)
+
+                    the_sco.remove(max(the_sco))
+                    the_sco.remove(min(the_sco))
 
                     f.write("%s\n" % SECOND_SEP)
+                    
+                    the_sco2 = []
                     
                     for m in mat2:
                         if elt_type == TYPE_1_COL:
@@ -183,8 +213,33 @@ def do_report(index, k_data, cl, b1_res, a2_res, b1_per, a2_per, extd,
                             mat_cl = cl.a2_data(NAMES_CONVERT[m[MAT_NAME_1_COL]])
                             
                         m[MAT_RES_COL] = CHR_TO_RES[m[MAT_RES_COL]]
+                        
+                        the_sco2.append(int(m[-1][m[-1].find('-')+1:]))
+                        
+                        the_mark = ''
+                        
+                        if m[2] == MAX_IS_FIRST:
+                            if cl_2[CL_POS_COL] + DIFF_POS_THIRD < mat_cl[CL_POS_COL]:
+                                the_mark = THE_MARK
+                        elif m[2] == MAX_IS_SECOND:
+                            if mat_cl[CL_POS_COL] + DIFF_POS_SECOND < cl_2[CL_POS_COL]:
+                                the_mark = THE_MARK                                           
+                        elif mat_cl[CL_POS_COL] + DIFF_POS_THIRD < cl_2[CL_POS_COL]:
+                                the_mark = THE_MARK
                             
-                        f.write("%s (%s)\n" % (m, mat_cl[CL_POS_COL]))
+                        if mat_cl[CL_POS_COL] < cl_1[CL_POS_COL] + REF_LEVEL:
+                            the_ref = "%s [%s] " % (THE_REF, m[2])
+                        else:
+                            the_ref = ''
+                                
+                        f.write("%s (%s) %s %s\n" % (m, mat_cl[CL_POS_COL], 
+                                                     the_ref ,the_mark))
+                        
+                    f.write("%s\n" % SECOND_SEP)
+                        
+                    the_sco2.remove(max(the_sco2))
+                    the_sco2.remove(min(the_sco2))
+                    f.write("%0.1f - %0.1f\n" % (np.mean(the_sco), np.mean(the_sco2)))
 
                 else:
                     trend_1.append(TREND_IG)

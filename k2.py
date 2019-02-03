@@ -25,13 +25,26 @@ import sys
 from ctes import *
 from kparser import ProgramArgumentsException, ProgramArguments
 from kdat import KDat
+from kscrap import KScrap
 from clda import ClDat
 from resd import retrieve_res, calculate_res, calc_res_per
 from extd import ExtD
 from pred import predict_k
 from ap import calc_q_from_pre
-from kfiles import save_all_data, read_res_file
+from kfiles import save_all_data, read_res_file, save_file_resm
 from report import do_report
+
+def retrieve_resm():   
+    
+    print("Retrieving resm ...")
+    
+    j, loc, vis, res = KScrap.resm_scraping(RESM_B1)  
+    
+    save_file_resm(B1_RES_FILE, j, loc, vis, res, B1_SIZE)
+    
+    j, loc, vis, res = KScrap.resm_scraping(RESM_A2) 
+    
+    save_file_resm(A2_RES_FILE, j, loc, vis, res, A2_SIZE)
 
 def retrieve_data(progargs):
     
@@ -50,7 +63,7 @@ def retrieve_data(progargs):
         cl.load()
         
         if progargs.retrieve_res:
-            retrieve_res()
+            retrieve_resm()
         else:
             print("Retrieving of res not asked, using existing res ...")
             
