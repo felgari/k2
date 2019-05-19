@@ -36,7 +36,7 @@ from report import do_report
 
 def retrieve_resm():   
     
-    print("Retrieving resm ...")
+    print("Retrieving res ...")
     
     j, loc, vis, res = KScrap.resm_scraping(RESM_B1)  
     
