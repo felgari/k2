@@ -217,6 +217,8 @@ def save_all_data(k, extd, ap, pre_1, pre_2, pre_avg, avg_red,
             f.write("%s\n" % CSV_DELIMITER_TAB.join(str(e) for e in OUT_COLS))
             
             for i in range(len(k.k)):  
+                if i >= len(the_trend):
+                    the_trend.append([0, 0, 0])
 
                 row = [ 
     #                extd.lm[i][0], extd.lm[i][1], extd.lm[i][2], \
